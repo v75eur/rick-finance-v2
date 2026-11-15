@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏦 Rick Finance v2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 12px; font-size: 15px; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #1e293b; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+  h1 { font-size: 22px; }
+  .btn { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.15s; }
+  .btn:hover { background: #334155; }
+  .btn-primary { background: #3b82f6; border-color: #3b82f6; color: white; }
+  .btn-primary:hover { background: #2563eb; }
+  .btn-danger { background: #dc2626; border-color: #dc2626; color: white; padding: 4px 10px; font-size: 12px; }
+  .btn-danger:hover { background: #b91c1c; }
+  .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .card h2 { font-size: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+  .tab { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+  .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+  .form-group { margin-bottom: 10px; }
+  .form-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; background: #0f172a; border: 1px solid #334155; color: #e2e8f0; padding: 10px; border-radius: 8px; font-size: 14px; }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: #3b82f6; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 8px; text-align: left; border-bottom: 1px solid #334155; }
+  th { background: #0f172a; color: #94a3b8; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+  tr:hover { background: #0f172a; }
+  .text-right { text-align: right; }
+  .text-danger { color: #ef4444; }
+  .text-ok { color: #10b981; }
+  .text-warn { color: #f59e0b; }
+  .toast { position: fixed; bottom: 20px; right: 20px; left: 20px; max-width: 400px; margin-left: auto; background: #10b981; color: white; padding: 12px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: none; z-index: 1000; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: #dc2626; }
+  .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 600; }
+  .alert-danger { background: #7f1d1d; color: #fecaca; border: 1px solid #dc2626; }
+  .alert-ok { background: #064e3b; color: #a7f3d0; border: 1px solid #10b981; }
+  .empty { color: #64748b; font-size: 13px; text-align: center; padding: 12px; font-style: italic; }
+  .hidden { display: none !important; }
+  .loading { text-align: center; padding: 40px; color: #94a3b8; }
+  .solde-pos { color: #10b981; font-weight: 700; }
+  .solde-neg { color: #ef4444; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🏦 Rick Finance v2 — Plan comptable</h1>
+    <button class="btn" onclick="loadAll()">🔄 Actualiser</button>
+  </header>
+
+  <div id="loading" class="loading">Chargement...</div>
+
+  <div id="content" class="hidden">
+    <div id="alertZone"></div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('ecritures')">📝 Écritures</button>
+      <button class="tab" onclick="showTab('grandlivre')">📖 Grand livre</button>
+      <button class="tab" onclick="showTab('balance')">⚖️ Balance</button>
+      <button class="tab" onclick="showTab('comptes')">📋 Comptes</button>
+    </div>
+
+    <!-- Onglet Écritures -->
+    <div id="tab-ecritures">
+      <div class="card">
+        <h2>➕ Nouvelle écriture (partie double)</h2>
+        <div class="form-row-3">
+          <div class="form-group"><label>Date</label><input type="date" id="ecDate"></div>
+          <div class="form-group"><label>Libellé</label><input type="text" id="ecLibelle" placeholder="Achat nourriture"></div>
+          <div class="form-group"><label>Montant (FCFA)</label><input type="number" id="ecMontant" placeholder="5000"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Compte débit</label><select id="ecDebit"></select></div>
+          <div class="form-group"><label>Compte crédit</label><select id="ecCredit"></select></div>
+        </div>
+        <button class="btn btn-primary" onclick="submitEcriture()">💾 Enregistrer l'écriture</button>
+      </div>
+
+      <div class="card">
+        <h2>📝 Dernières écritures</h2>
+        <div id="ecrituresList"></div>
+      </div>
+    </div>
+
+    <!-- Onglet Grand livre -->
+    <div id="tab-grandlivre" class="hidden">
+      <div class="card">
+        <h2>📖 Grand livre</h2>
+        <div class="form-group">
+          <label>Choisir un compte</label>
+          <select id="glCompte" onchange="renderGrandLivre()"></select>
+        </div>
+        <div id="glContent"></div>
+      </div>
+    </div>
+
+    <!-- Onglet Balance -->
+    <div id="tab-balance" class="hidden">
+      <div class="card">
+        <h2>⚖️ Balance générale</h2>
+        <div id="balanceContent"></div>
+      </div>
+    </div>
+
+    <!-- Onglet Comptes -->
+    <div id="tab-comptes" class="hidden">
+      <div class="card">
+        <h2>📋 Plan comptable (22 comptes)</h2>
+        <div id="comptesList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const SUPABASE_URL = "https://dfkynusomkddxolhdtcd.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRma3ludXNvbWtkZHhvbGhkdGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3NTA1ODcsImV4cCI6MjExMDMyNjU4N30.ETugc5fpb5rKwWbMmiFdd0Tj7pcyaRBfYZF-enItNKc";
+
+let COMPTES = [];
+let ECRITURES = [];
+
+function fmt(n) { return Number(n || 0).toLocaleString('fr-FR').replace(/\u202f/g, ' ') + ' F'; }
+
+function toast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+async function apiGet(path) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function apiPost(path, body) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function apiDelete(path) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
+
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  ['ecritures','grandlivre','balance','comptes'].forEach(n => {
+    document.getElementById('tab-' + n).classList.add('hidden');
+  });
+  document.getElementById('tab-' + name).classList.remove('hidden');
+  if (name === 'grandlivre') renderGrandLivre();
+  if (name === 'balance') renderBalance();
+}
+
+async function loadAll() {
+  document.getElementById('loading').classList.remove('hidden');
+  document.getElementById('content').classList.add('hidden');
+  try {
+    COMPTES = await apiGet('comptes?select=*&order=numero');
+    ECRITURES = await apiGet('ecritures?select=*&order=date.desc,id.desc');
+    renderAll();
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('content').classList.remove('hidden');
+  } catch (e) {
+    document.getElementById('loading').innerHTML = '❌ ' + e.message + '<br><br><button class="btn" onclick="loadAll()">Réessayer</button>';
+  }
+}
+
+function renderAll() {
+  // Remplir les selects
+  const options = COMPTES.map(c => `<option value="${c.numero}">${c.numero} — ${escapeHtml(c.libelle)}</option>`).join('');
+  document.getElementById('ecDebit').innerHTML = options;
+  document.getElementById('ecCredit').innerHTML = options;
+  document.getElementById('glCompte').innerHTML = options;
+
+  // Date par défaut
+  if (!document.getElementById('ecDate').value) {
+    document.getElementById('ecDate').value = new Date().toISOString().slice(0,10);
+  }
+
+  renderEcritures();
+  renderComptes();
+  renderAlert();
+}
+
+function renderAlert() {
+  let totalDebit = ECRITURES.reduce((s, e) => s + Number(e.montant || 0), 0);
+  let totalCredit = totalDebit; // partie double = toujours équilibré
+  document.getElementById('alertZone').innerHTML = `<div class="alert alert-ok">✅ ${ECRITURES.length} écriture(s) — Débit total = Crédit total = ${fmt(totalDebit)}</div>`;
+}
+
+function renderEcritures() {
+  const div = document.getElementById('ecrituresList');
+  if (!ECRITURES.length) { div.innerHTML = '<div class="empty">Aucune écriture</div>'; return; }
+  const getLib = (num) => { const c = COMPTES.find(x => x.numero === num); return c ? c.libelle : num; };
+  div.innerHTML = `<table><thead><tr><th>Date</th><th>Libellé</th><th>Débit</th><th>Crédit</th><th class="text-right">Montant</th><th></th></tr></thead><tbody>` +
+    ECRITURES.map(e => `<tr>
+      <td>${e.date}</td>
+      <td>${escapeHtml(e.libelle)}</td>
+      <td>${e.compte_debit} — ${escapeHtml(getLib(e.compte_debit))}</td>
+      <td>${e.compte_credit} — ${escapeHtml(getLib(e.compte_credit))}</td>
+      <td class="text-right">${fmt(e.montant)}</td>
+      <td><button class="btn btn-danger" onclick="delEcriture(${e.id})">🗑️</button></td>
+    </tr>`).join('') + '</tbody></table>';
+}
+
+function renderComptes() {
+  const div = document.getElementById('comptesList');
+  div.innerHTML = `<table><thead><tr><th>Numéro</th><th>Libellé</th><th>Classe</th><th>Type</th><th class="text-right">Solde</th></tr></thead><tbody>` +
+    COMPTES.map(c => {
+      const solde = calculSolde(c.numero);
+      const cls = solde >= 0 ? 'solde-pos' : 'solde-neg';
+      return `<tr>
+        <td><strong>${c.numero}</strong></td>
+        <td>${escapeHtml(c.libelle)}</td>
+        <td>${c.classe}</td>
+        <td>${c.type}</td>
+        <td class="text-right ${cls}">${fmt(solde)}</td>
+      </tr>`;
+    }).join('') + '</tbody></table>';
+}
+
+function calculSolde(numero) {
+  let solde = 0;
+  ECRITURES.forEach(e => {
+    if (e.compte_debit === numero) solde += Number(e.montant);
+    if (e.compte_credit === numero) solde -= Number(e.montant);
+  });
+  // Pour les comptes de passif/produit, le solde est créditeur (inversé)
+  const c = COMPTES.find(x => x.numero === numero);
+  if (c && (c.type === 'passif' || c.type === 'produit')) solde = -solde;
+  return solde;
+}
+
+function renderGrandLivre() {
+  const num = document.getElementById('glCompte').value;
+  const div = document.getElementById('glContent');
+  const mvt = ECRITURES.filter(e => e.compte_debit === num || e.compte_credit === num);
+  if (!mvt.length) { div.innerHTML = '<div class="empty">Aucun mouvement sur ce compte</div>'; return; }
+  let solde = 0;
+  div.innerHTML = `<table><thead><tr><th>Date</th><th>Libellé</th><th class="text-right">Débit</th><th class="text-right">Crédit</th><th class="text-right">Solde</th></tr></thead><tbody>` +
+    mvt.map(e => {
+      const d = e.compte_debit === num ? Number(e.montant) : 0;
+      const c = e.compte_credit === num ? Number(e.montant) : 0;
+      solde += d - c;
+      return `<tr><td>${e.date}</td><td>${escapeHtml(e.libelle)}</td><td class="text-right">${d ? fmt(d) : '-'}</td><td class="text-right">${c ? fmt(c) : '-'}</td><td class="text-right ${solde >= 0 ? 'solde-pos' : 'solde-neg'}">${fmt(solde)}</td></tr>`;
+    }).join('') + '</tbody></table>';
+}
+
+function renderBalance() {
+  const div = document.getElementById('balanceContent');
+  let totD = 0, totC = 0;
+  const rows = COMPTES.map(c => {
+    let d = 0, cr = 0;
+    ECRITURES.forEach(e => {
+      if (e.compte_debit === c.numero) d += Number(e.montant);
+      if (e.compte_credit === c.numero) cr += Number(e.montant);
+    });
+    totD += d; totC += cr;
+    if (d === 0 && cr === 0) return '';
+    return `<tr><td>${c.numero}</td><td>${escapeHtml(c.libelle)}</td><td class="text-right">${fmt(d)}</td><td class="text-right">${fmt(cr)}</td></tr>`;
+  }).join('');
+  const eq = Math.abs(totD - totC) < 0.01;
+  div.innerHTML = `<table><thead><tr><th>Compte</th><th>Libellé</th><th class="text-right">Débit</th><th class="text-right">Crédit</th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr style="font-weight:700; background:#0f172a;"><td colspan="2">TOTAUX</td><td class="text-right">${fmt(totD)}</td><td class="text-right">${fmt(totC)}</td></tr></tfoot></table>
+    <div class="alert ${eq ? 'alert-ok' : 'alert-danger'}" style="margin-top:12px;">${eq ? '✅ Balance équilibrée (Débit = Crédit)' : '⚠️ DÉSÉQUILIBRE : écart de ' + fmt(Math.abs(totD - totC))}</div>`;
+}
+
+async function submitEcriture() {
+  const date = document.getElementById('ecDate').value;
+  const libelle = document.getElementById('ecLibelle').value.trim();
+  const montant = Number(document.getElementById('ecMontant').value);
+  const debit = document.getElementById('ecDebit').value;
+  const credit = document.getElementById('ecCredit').value;
+  if (!date || !libelle || !montant || montant <= 0) { toast('Champs invalides', true); return; }
+  if (debit === credit) { toast('Débit et crédit identiques interdits', true); return; }
+  const mois = date.slice(0, 7);
+  try {
+    await apiPost('ecritures', { date, libelle, montant, compte_debit: debit, compte_credit: credit, mois });
+    toast('Écriture enregistrée');
+    document.getElementById('ecLibelle').value = '';
+    document.getElementById('ecMontant').value = '';
+    loadAll();
+  } catch (e) { toast(e.message, true); }
+}
+
+async function delEcriture(id) {
+  if (!confirm('Supprimer cette écriture ?')) return;
+  try {
+    await apiDelete(`ecritures?id=eq.${id}`);
+    toast('Supprimée');
+    loadAll();
+  } catch (e) { toast(e.message, true); }
+}
+
+loadAll();
+</script>
+</body>
+</html>
