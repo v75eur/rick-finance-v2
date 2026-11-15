@@ -10,33 +10,17 @@ jobs:
   rapport:
     runs-on: ubuntu-latest
     steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Configurer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Envoyer rapport sur ntfy
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-        run: |
-          DATA=$(curl -s -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $SUPABASE_KEY" "$SUPABASE_URL/rest/v1/ecritures?select=*&order=date.desc")
-          COMPTES=$(curl -s -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $SUPABASE_KEY" "$SUPABASE_URL/rest/v1/comptes?select=*")
-          python3 -c "
-          import json, os, urllib.request, datetime
-          ecritures = json.loads(os.environ['DATA'])
-          comptes = json.loads(os.environ['COMPTES'])
-          mois = datetime.date.today().strftime('%Y-%m')
-          def solde(num):
-              s = 0
-              for e in ecritures:
-                  if e['compte_debit'] == num: s += float(e['montant'])
-                  if e['compte_credit'] == num: s -= float(e['montant'])
-              c = next((x for x in comptes if x['numero'] == num), None)
-              if c and c['type'] in ('passif','produit'): s = -s
-              return s
-          banque = solde('512'); caisse = solde('530'); dispo = banque + caisse
-          rev = sum(float(e['montant']) for e in ecritures if e['mois']==mois and any(c['numero']==e['compte_credit'] and c['type']=='produit' for c in comptes))
-          dep = sum(float(e['montant']) for e in ecritures if e['mois']==mois and any(c['numero']==e['compte_debit'] and c['type']=='charge' for c in comptes))
-          msg = f'Disponible : {dispo:,.0f} F\nRevenus {mois} : {rev:,.0f} F\nDepenses {mois} : {dep:,.0f} F\n\nBanque : {banque:,.0f} F\nCaisse : {caisse:,.0f} F'.replace(',', ' ')
-          req = urllib.request.Request('https://ntfy.sh/' + os.environ['NTFY_TOPIC'], data=msg.encode(), method='POST')
-          req.add_header('Title', 'Rapport Rick Finance')
-          req.add_header('Tags', 'bar_chart')
-          urllib.request.urlopen(req)
-          "
+        run: python rapport.py
