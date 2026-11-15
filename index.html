@@ -8,33 +8,23 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 12px; padding-bottom: 80px; font-size: 16px; }
   .container { max-width: 600px; margin: 0 auto; }
-
-  /* Header */
   .header { text-align: center; padding: 8px 0 16px; }
   .header h1 { font-size: 20px; margin-bottom: 2px; }
   .header p { font-size: 13px; color: #94a3b8; }
-
-  /* Carte solde principal */
   .solde-card { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; text-align: center; box-shadow: 0 8px 24px rgba(59,130,246,0.3); }
   .solde-label { font-size: 14px; opacity: 0.9; margin-bottom: 4px; }
   .solde-value { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
   .solde-detail { display: flex; justify-content: space-around; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 13px; }
   .solde-detail div { text-align: center; }
   .solde-detail strong { display: block; font-size: 16px; margin-top: 2px; }
-
-  /* Boutons d'action */
   .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   .action-btn { border: none; border-radius: 16px; padding: 20px 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.1s; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .action-btn:active { transform: scale(0.97); }
   .action-depense { background: #dc2626; color: white; }
   .action-revenu { background: #10b981; color: white; }
   .action-btn .emoji { font-size: 28px; }
-
-  /* Card générique */
   .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 16px; margin-bottom: 16px; }
   .card h2 { font-size: 15px; margin-bottom: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-
-  /* Liste opérations */
   .op-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; }
   .op-item:last-child { border-bottom: none; }
   .op-left { flex: 1; min-width: 0; }
@@ -43,51 +33,35 @@
   .op-amount { font-size: 15px; font-weight: 700; white-space: nowrap; margin-left: 8px; }
   .op-amount.neg { color: #ef4444; }
   .op-amount.pos { color: #10b981; }
-
-  /* Modal overlay */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 100; align-items: flex-end; justify-content: center; }
   .modal-overlay.show { display: flex; }
   .modal { background: #1e293b; width: 100%; max-width: 600px; border-radius: 24px 24px 0 0; padding: 20px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.2s; }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
   .modal h2 { font-size: 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
   .modal-close { background: #334155; border: none; color: #e2e8f0; width: 32px; height: 32px; border-radius: 16px; font-size: 18px; cursor: pointer; }
-
-  /* Form dans modal */
   .form-group { margin-bottom: 14px; }
   .form-group label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 6px; font-weight: 600; }
   .form-group input, .form-group select { width: 100%; background: #0f172a; border: 2px solid #334155; color: #e2e8f0; padding: 14px; border-radius: 12px; font-size: 16px; }
   .form-group input:focus, .form-group select:focus { outline: none; border-color: #3b82f6; }
   .form-group input[type="number"] { font-size: 24px; font-weight: 700; text-align: center; }
-
-  /* Catégories chips */
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { background: #0f172a; border: 2px solid #334155; color: #94a3b8; padding: 10px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.15s; }
   .chip.selected { background: #3b82f6; border-color: #3b82f6; color: white; }
-
-  /* Bouton principal */
   .btn-submit { width: 100%; background: #3b82f6; color: white; border: none; padding: 18px; border-radius: 16px; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 8px; }
   .btn-submit:active { background: #2563eb; }
   .btn-submit.danger { background: #dc2626; }
   .btn-submit.success { background: #10b981; }
-
-  /* Bottom nav */
   .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; border-top: 1px solid #334155; display: flex; z-index: 50; }
   .nav-item { flex: 1; padding: 12px; text-align: center; background: none; border: none; color: #64748b; cursor: pointer; font-size: 12px; font-weight: 600; }
   .nav-item.active { color: #3b82f6; }
   .nav-item .emoji { display: block; font-size: 22px; margin-bottom: 2px; }
-
-  /* Alertes */
   .alert { padding: 14px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 14px; font-weight: 600; }
   .alert-danger { background: #7f1d1d; color: #fecaca; border: 2px solid #dc2626; }
   .alert-warn { background: #78350f; color: #fef3c7; border: 2px solid #f59e0b; }
   .alert-ok { background: #064e3b; color: #a7f3d0; border: 2px solid #10b981; }
-
-  /* Toast */
   .toast { position: fixed; top: 20px; left: 20px; right: 20px; max-width: 400px; margin: 0 auto; background: #10b981; color: white; padding: 14px 18px; border-radius: 12px; font-size: 15px; font-weight: 600; opacity: 0; transform: translateY(-20px); transition: all 0.3s; pointer-events: none; z-index: 200; text-align: center; }
   .toast.show { opacity: 1; transform: translateY(0); }
   .toast.error { background: #dc2626; }
-
-  /* Utilitaires */
   .hidden { display: none !important; }
   .loading { text-align: center; padding: 60px 20px; color: #94a3b8; font-size: 15px; }
   .empty { text-align: center; padding: 24px; color: #64748b; font-size: 14px; font-style: italic; }
@@ -96,132 +70,78 @@
 </head>
 <body>
 <div class="container">
-
-  <!-- Header -->
   <div class="header">
     <h1>🏦 Rick Finance</h1>
     <p id="dateJour"></p>
   </div>
-
   <div id="loading" class="loading">Chargement...</div>
-
   <div id="app" class="hidden">
-
-    <!-- Alertes -->
     <div id="alertZone"></div>
-
-    <!-- Vue Accueil -->
     <div id="view-accueil">
       <div class="solde-card">
         <div class="solde-label">💰 Mon argent disponible</div>
         <div class="solde-value" id="soldeDispo">0 F</div>
         <div class="solde-detail">
-          <div>Revenus ce mois<strong id="revenusMois" style="color:#10b981">0 F</strong></div>
-          <div>Dépenses ce mois<strong id="depensesMois" style="color:#ef4444">0 F</strong></div>
+          <div>Revenus ce mois<strong id="revenusMois" style="color:#a7f3d0">0 F</strong></div>
+          <div>Dépenses ce mois<strong id="depensesMois" style="color:#fecaca">0 F</strong></div>
         </div>
       </div>
-
       <div class="actions">
-        <button class="action-btn action-depense" onclick="openModal('depense')">
-          <span class="emoji">💸</span>
-          Dépense
-        </button>
-        <button class="action-btn action-revenu" onclick="openModal('revenu')">
-          <span class="emoji">💵</span>
-          Revenu
-        </button>
+        <button class="action-btn action-depense" onclick="openModal('depense')"><span class="emoji">💸</span>Dépense</button>
+        <button class="action-btn action-revenu" onclick="openModal('revenu')"><span class="emoji">💵</span>Revenu</button>
       </div>
-
       <div class="card">
         <h2>Dernières opérations</h2>
         <div id="dernieresOps"></div>
       </div>
     </div>
-
-    <!-- Vue Comptes (simplifiée) -->
     <div id="view-comptes" class="hidden">
-      <div class="card">
-        <h2>💵 Argent disponible</h2>
-        <div id="comptesDispo"></div>
-      </div>
-      <div class="card">
-        <h2>💰 Ce que je possède</h2>
-        <div id="comptesActif"></div>
-      </div>
-      <div class="card">
-        <h2>💳 Ce que je dois</h2>
-        <div id="comptesPassif"></div>
-      </div>
-      <div class="card">
-        <h2>📈 Revenus</h2>
-        <div id="comptesProduit"></div>
-      </div>
-      <div class="card">
-        <h2>📉 Dépenses</h2>
-        <div id="comptesCharge"></div>
-      </div>
+      <div class="card"><h2>💵 Argent disponible</h2><div id="comptesDispo"></div></div>
+      <div class="card"><h2>💰 Ce que je possède</h2><div id="comptesActif"></div></div>
+      <div class="card"><h2>💳 Ce que je dois</h2><div id="comptesPassif"></div></div>
+      <div class="card"><h2>📈 Revenus</h2><div id="comptesProduit"></div></div>
+      <div class="card"><h2>📉 Dépenses</h2><div id="comptesCharge"></div></div>
     </div>
-
-    <!-- Vue Avancé -->
     <div id="view-avance" class="hidden">
-      <div class="card">
-        <h2>⚖️ Balance</h2>
-        <div id="balanceContent"></div>
-      </div>
+      <div class="card"><h2>⚖️ Balance</h2><div id="balanceContent"></div></div>
       <div class="card">
         <h2>📖 Grand livre</h2>
-        <div class="form-group">
-          <label>Compte</label>
-          <select id="glCompte" onchange="renderGrandLivre()"></select>
-        </div>
+        <div class="form-group"><label>Compte</label><select id="glCompte" onchange="renderGrandLivre()"></select></div>
         <div id="glContent"></div>
       </div>
     </div>
-
   </div>
 </div>
-
-<!-- Bottom nav -->
 <div class="bottom-nav">
-  <button class="nav-item active" onclick="showView('accueil', this)">
-    <span class="emoji">🏠</span>Accueil
-  </button>
-  <button class="nav-item" onclick="showView('comptes', this)">
-    <span class="emoji">📊</span>Comptes
-  </button>
-  <button class="nav-item" onclick="showView('avance', this)">
-    <span class="emoji">⚙️</span>Avancé
-  </button>
+  <button class="nav-item active" onclick="showView('accueil', this)"><span class="emoji">🏠</span>Accueil</button>
+  <button class="nav-item" onclick="showView('comptes', this)"><span class="emoji">📊</span>Comptes</button>
+  <button class="nav-item" onclick="showView('avance', this)"><span class="emoji">⚙️</span>Avancé</button>
 </div>
-
-<!-- Modal Dépense / Revenu -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
-    <h2 id="modalTitle">💸 Nouvelle dépense <button class="modal-close" onclick="closeModal()">✕</button></h2>
-    <div class="form-group">
-      <label>Combien ?</label>
-      <input type="number" id="mMontant" placeholder="0" inputmode="numeric">
-    </div>
-    <div class="form-group">
-      <label>C'était pour quoi ?</label>
-      <div class="chips" id="mChips"></div>
-    </div>
-    <div class="form-group">
-      <label>Détail (optionnel)</label>
-      <input type="text" id="mDetail" placeholder="Ex: déjeuner au marché">
-    </div>
+    <h2 id="modalTitle">Nouvelle opération <button class="modal-close" onclick="closeModal()">✕</button></h2>
+    <div class="form-group"><label>Combien ?</label><input type="number" id="mMontant" placeholder="0" inputmode="numeric"></div>
+    <div class="form-group"><label>C'était pour quoi ?</label><div class="chips" id="mChips"></div></div>
+    <div class="form-group"><label>Détail (optionnel)</label><input type="text" id="mDetail" placeholder="Ex: déjeuner au marché"></div>
     <button class="btn-submit" id="mSubmit" onclick="submitOperation()">Ajouter</button>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script>
-// ============ CONFIG ============
 const SUPABASE_URL = "https://dfkynusomkddxolhdtcd.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRma3ludXNvbWtkZHhvbGhkdGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3NTA1ODcsImV4cCI6MjExMDMyNjU4N30.ETugc5fpb5rKwWbMmiFdd0Tj7pcyaRBfYZF-enItNKc";
+const NTFY_TOPIC = "rick-finance-v2-2026";
 
-// Catégories → compte comptable
+async function notify(title, message, priority = "default") {
+  try {
+    await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+      method: 'POST',
+      headers: { 'Title': title, 'Priority': priority, 'Tags': 'money_with_wings' },
+      body: message
+    });
+  } catch (e) { console.warn('ntfy', e); }
+}
+
 const CATEGORIES_DEPENSE = [
   { nom: "Nourriture", emoji: "🍚", compte: "601" },
   { nom: "Transport", emoji: "🚌", compte: "626" },
@@ -231,23 +151,19 @@ const CATEGORIES_DEPENSE = [
   { nom: "Salaire", emoji: "👥", compte: "641" },
   { nom: "Autre", emoji: "📦", compte: "606" }
 ];
-
 const CATEGORIES_REVENU = [
   { nom: "Salaire", emoji: "💼", compte: "701" },
   { nom: "Vente", emoji: "🛒", compte: "701" },
   { nom: "Prestation", emoji: "🎯", compte: "706" },
   { nom: "Autre", emoji: "💰", compte: "771" }
 ];
-
 const COMPTE_BANQUE = "512";
 
-// ============ ÉTAT ============
 let COMPTES = [];
 let ECRITURES = [];
 let modalType = 'depense';
 let selectedCategorie = null;
 
-// ============ HELPERS ============
 function fmt(n) { return Number(n || 0).toLocaleString('fr-FR').replace(/\u202f/g, ' ') + ' F'; }
 function today() { return new Date().toISOString().slice(0, 10); }
 function moisActuel() { return today().slice(0, 7); }
@@ -260,11 +176,8 @@ function toast(msg, isError = false) {
   setTimeout(() => t.className = 'toast', 3000);
 }
 
-// ============ API ============
 async function apiGet(path) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-  });
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
   if (!r.ok) throw new Error(await r.text());
   return r.json();
 }
@@ -279,7 +192,6 @@ async function apiPost(path, body) {
   return r.json();
 }
 
-// ============ CHARGEMENT ============
 async function loadAll() {
   document.getElementById('loading').classList.remove('hidden');
   document.getElementById('app').classList.add('hidden');
@@ -290,11 +202,10 @@ async function loadAll() {
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
   } catch (e) {
-    document.getElementById('loading').innerHTML = '❌ Erreur : ' + e.message + '<br><br><button onclick="loadAll()" style="padding:12px 24px;border-radius:12px;background:#3b82f6;color:white;border:none;font-size:16px;margin-top:16px;">Réessayer</button>';
+    document.getElementById('loading').innerHTML = '❌ ' + e.message + '<br><br><button onclick="loadAll()" style="padding:12px 24px;border-radius:12px;background:#3b82f6;color:white;border:none;font-size:16px;margin-top:16px;">Réessayer</button>';
   }
 }
 
-// ============ CALCULS ============
 function soldeCompte(numero) {
   let solde = 0;
   ECRITURES.forEach(e => {
@@ -306,33 +217,32 @@ function soldeCompte(numero) {
   return solde;
 }
 
-function totalParType(type) {
-  return COMPTES.filter(c => c.type === type).reduce((s, c) => s + soldeCompte(c.numero), 0);
-}
-
 function mouvementsMois(mois, type) {
   let total = 0;
   ECRITURES.filter(e => e.mois === mois).forEach(e => {
-    const debitCompte = COMPTES.find(c => c.numero === e.compte_debit);
-    const creditCompte = COMPTES.find(c => c.numero === e.compte_credit);
-    if (debitCompte && debitCompte.type === type) total += Number(e.montant);
-    if (creditCompte && creditCompte.type === type) total -= Number(e.montant);
+    const dc = COMPTES.find(c => c.numero === e.compte_debit);
+    const cc = COMPTES.find(c => c.numero === e.compte_credit);
+    if (dc && dc.type === type) total += Number(e.montant);
+    if (cc && cc.type === type) total -= Number(e.montant);
   });
   return Math.abs(total);
 }
 
-// ============ RENDU ============
 function renderAll() {
   const dispo = soldeCompte(COMPTE_BANQUE) + soldeCompte("530");
   document.getElementById('soldeDispo').textContent = fmt(dispo);
   document.getElementById('revenusMois').textContent = fmt(mouvementsMois(moisActuel(), 'produit'));
   document.getElementById('depensesMois').textContent = fmt(mouvementsMois(moisActuel(), 'charge'));
 
-  // Alertes
   const alertes = [];
-  if (dispo < 0) alertes.push(`<div class="alert alert-danger">⚠️ Ton solde est négatif : ${fmt(dispo)}</div>`);
-  if (dispo > 0 && dispo < 10000) alertes.push(`<div class="alert alert-warn">⚠️ Attention, il te reste seulement ${fmt(dispo)}</div>`);
+  if (dispo < 0) alertes.push(`<div class="alert alert-danger">⚠️ Solde négatif : ${fmt(dispo)}</div>`);
+  else if (dispo > 0 && dispo < 10000) alertes.push(`<div class="alert alert-warn">⚠️ Il te reste seulement ${fmt(dispo)}</div>`);
   document.getElementById('alertZone').innerHTML = alertes.join('');
+
+  if (dispo < 0 && !window._alerteSoldeNegatif) {
+    window._alerteSoldeNegatif = true;
+    notify('⚠️ SOLDE NÉGATIF', `Ton solde est de ${fmt(dispo)}`, 'urgent');
+  }
 
   renderDernieresOps();
   renderComptes();
@@ -348,13 +258,7 @@ function renderDernieresOps() {
     const estRevenu = COMPTES.find(c => c.numero === e.compte_credit)?.type === 'produit';
     const signe = estRevenu ? '+' : '-';
     const cls = estRevenu ? 'pos' : 'neg';
-    return `<div class="op-item">
-      <div class="op-left">
-        <div class="op-name">${escapeHtml(e.libelle)}</div>
-        <div class="op-date">${e.date}</div>
-      </div>
-      <div class="op-amount ${cls}">${signe}${fmt(e.montant).replace(' F','')} F</div>
-    </div>`;
+    return `<div class="op-item"><div class="op-left"><div class="op-name">${escapeHtml(e.libelle)}</div><div class="op-date">${e.date}</div></div><div class="op-amount ${cls}">${signe}${fmt(e.montant).replace(' F','')} F</div></div>`;
   }).join('');
 }
 
@@ -373,10 +277,7 @@ function renderComptes() {
       if (!c) return '';
       const s = soldeCompte(n);
       if (s === 0) return '';
-      return `<div class="op-item">
-        <div class="op-left"><div class="op-name">${escapeHtml(c.libelle)}</div></div>
-        <div class="op-amount ${s >= 0 ? 'pos' : 'neg'}">${fmt(s)}</div>
-      </div>`;
+      return `<div class="op-item"><div class="op-left"><div class="op-name">${escapeHtml(c.libelle)}</div></div><div class="op-amount ${s >= 0 ? 'pos' : 'neg'}">${fmt(s)}</div></div>`;
     }).filter(x => x).join('');
     div.innerHTML = lignes || '<div class="empty">Aucun mouvement</div>';
   });
@@ -395,8 +296,7 @@ function renderBalance() {
     return `<tr><td>${c.numero}</td><td>${escapeHtml(c.libelle)}</td><td class="text-right">${fmt(d)}</td><td class="text-right">${fmt(cr)}</td></tr>`;
   }).join('');
   const eq = Math.abs(totD - totC) < 0.01;
-  document.getElementById('balanceContent').innerHTML = `<table style="width:100%;font-size:13px;border-collapse:collapse;"><thead><tr style="color:#94a3b8;"><th style="text-align:left;padding:8px 4px;">Compte</th><th style="text-align:left;padding:8px 4px;">Libellé</th><th style="text-align:right;padding:8px 4px;">Débit</th><th style="text-align:right;padding:8px 4px;">Crédit</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="alert ${eq ? 'alert-ok' : 'alert-danger'}" style="margin-top:12px;">${eq ? '✅ Balance équilibrée' : '⚠️ Écart de ' + fmt(Math.abs(totD - totC))}</div>`;
+  document.getElementById('balanceContent').innerHTML = `<table style="width:100%;font-size:13px;border-collapse:collapse;"><thead><tr style="color:#94a3b8;"><th style="text-align:left;padding:8px 4px;">Compte</th><th style="text-align:left;padding:8px 4px;">Libellé</th><th style="text-align:right;padding:8px 4px;">Débit</th><th style="text-align:right;padding:8px 4px;">Crédit</th></tr></thead><tbody>${rows}</tbody></table><div class="alert ${eq ? 'alert-ok' : 'alert-danger'}" style="margin-top:12px;">${eq ? '✅ Balance équilibrée' : '⚠️ Écart de ' + fmt(Math.abs(totD - totC))}</div>`;
 }
 
 function renderGLSelect() {
@@ -419,7 +319,6 @@ function renderGrandLivre() {
   }).join('');
 }
 
-// ============ NAVIGATION ============
 function showView(name, btn) {
   ['accueil','comptes','avance'].forEach(v => document.getElementById('view-' + v).classList.add('hidden'));
   document.getElementById('view-' + name).classList.remove('hidden');
@@ -427,7 +326,6 @@ function showView(name, btn) {
   btn.classList.add('active');
 }
 
-// ============ MODAL ============
 function openModal(type) {
   modalType = type;
   selectedCategorie = null;
@@ -441,44 +339,32 @@ function openModal(type) {
   document.getElementById('modalOverlay').classList.add('show');
 }
 
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('show');
-}
-
-function selectChip(el, nom, compte) {
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedCategorie = { nom, compte };
-}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+function selectChip(el, nom, compte) { document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected')); el.classList.add('selected'); selectedCategorie = { nom, compte }; }
 
 async function submitOperation() {
   const montant = Number(document.getElementById('mMontant').value);
   const detail = document.getElementById('mDetail').value.trim();
   if (!montant || montant <= 0) { toast('Entre un montant valide', true); return; }
   if (!selectedCategorie) { toast('Choisis une catégorie', true); return; }
-
   const date = today();
   const mois = date.slice(0, 7);
   const libelle = detail || selectedCategorie.nom;
-
   let compteDebit, compteCredit;
-  if (modalType === 'depense') {
-    compteDebit = selectedCategorie.compte;
-    compteCredit = COMPTE_BANQUE;
-  } else {
-    compteDebit = COMPTE_BANQUE;
-    compteCredit = selectedCategorie.compte;
-  }
-
+  if (modalType === 'depense') { compteDebit = selectedCategorie.compte; compteCredit = COMPTE_BANQUE; }
+  else { compteDebit = COMPTE_BANQUE; compteCredit = selectedCategorie.compte; }
   try {
     await apiPost('ecritures', { date, libelle, montant, compte_debit: compteDebit, compte_credit: compteCredit, mois });
-    toast(modalType === 'depense' ? '💸 Dépense ajoutée' : '💵 Revenu ajouté');
+    const emoji = modalType === 'depense' ? '💸' : '💵';
+    const label = modalType === 'depense' ? 'Dépense' : 'Revenu';
+    const detailTxt = detail ? ` (${detail})` : '';
+    toast(emoji + ' ' + label + ' ajouté');
+    notify(emoji + ' ' + label + ' : ' + fmt(montant), selectedCategorie.nom + detailTxt + ' — ' + date, modalType === 'depense' ? 'high' : 'default');
     closeModal();
     loadAll();
   } catch (e) { toast(e.message, true); }
 }
 
-// ============ INIT ============
 document.getElementById('dateJour').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 loadAll();
 </script>
