@@ -8,12 +8,14 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 12px; padding-bottom: 80px; font-size: 16px; }
   .container { max-width: 600px; margin: 0 auto; }
-  .header { text-align: center; padding: 8px 0 8px; }
+  .header { text-align: center; padding: 8px 0; }
   .header h1 { font-size: 20px; }
   .toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
   .toolbar button { flex: 1; background: #334155; border: none; color: #e2e8f0; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .toolbar button:active { background: #3b82f6; }
   .mois-nav { display: flex; justify-content: space-between; align-items: center; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
   .mois-nav button { background: #334155; border: none; color: #e2e8f0; width: 36px; height: 36px; border-radius: 18px; font-size: 18px; cursor: pointer; }
+  .mois-nav button:active { background: #3b82f6; }
   .mois-label { font-size: 16px; font-weight: 700; text-transform: capitalize; }
   .solde-card { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; text-align: center; }
   .solde-label { font-size: 14px; opacity: 0.9; margin-bottom: 4px; }
@@ -55,6 +57,7 @@
   .form-group { margin-bottom: 14px; }
   .form-group label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 6px; font-weight: 600; }
   .form-group input, .form-group select { width: 100%; background: #0f172a; border: 2px solid #334155; color: #e2e8f0; padding: 14px; border-radius: 12px; font-size: 16px; }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: #3b82f6; }
   .form-group input[type="number"] { font-size: 24px; font-weight: 700; text-align: center; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { background: #0f172a; border: 2px solid #334155; color: #94a3b8; padding: 10px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: 600; }
@@ -69,10 +72,6 @@
   .alert { padding: 14px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 14px; font-weight: 600; }
   .alert-danger { background: #7f1d1d; color: #fecaca; border: 2px solid #dc2626; }
   .alert-warn { background: #78350f; color: #fef3c7; border: 2px solid #f59e0b; }
-  .alert-ok { background: #064e3b; color: #a7f3d0; border: 2px solid #10b981; }
-  .toast { position: fixed; top: 20px; left: 20px; right: 20px; max-width: 400px; margin: 0 auto; background: #10b981; color: white; padding: 14px 18px; border-radius: 12px; font-size: 15px; font-weight: 600; opacity: 0; transform: translateY(-20px); transition: all 0.3s; pointer-events: none; z-index: 200; text-align: center; }
-  .toast.show { opacity: 1; transform: translateY(0); }
-  .toast.error { background: #dc2626; }
   .hidden { display: none !important; }
   .loading { text-align: center; padding: 60px 20px; color: #94a3b8; }
   .empty { text-align: center; padding: 24px; color: #64748b; font-size: 14px; font-style: italic; }
@@ -89,6 +88,19 @@
   .revenu-bloc-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
   .revenu-bloc-name { font-weight: 600; font-size: 14px; }
   .revenu-bloc-rest { font-size: 13px; font-weight: 700; }
+
+  .loader-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.85); display: none; align-items: center; justify-content: center; z-index: 500; backdrop-filter: blur(4px); }
+  .loader-overlay.show { display: flex; }
+  .loader-box { background: #1e293b; border-radius: 20px; padding: 32px 40px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .spinner { width: 48px; height: 48px; border: 4px solid #334155; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text { font-size: 15px; font-weight: 600; color: #e2e8f0; }
+  .loader-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+
+  .toast { position: fixed; top: 20px; left: 20px; right: 20px; max-width: 400px; margin: 0 auto; background: #10b981; color: white; padding: 14px 18px; border-radius: 12px; font-size: 15px; font-weight: 600; opacity: 0; transform: translateY(-20px); transition: all 0.3s; pointer-events: none; z-index: 200; text-align: center; overflow: hidden; }
+  .toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .toast.error { background: #dc2626; }
+  .toast-undo { background: white; color: #dc2626; border: none; padding: 6px 12px; border-radius: 6px; margin-left: 12px; font-weight: 700; cursor: pointer; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -116,10 +128,7 @@
           <div>Dépenses<strong id="depensesMois" style="color:#fecaca">0 F</strong></div>
         </div>
       </div>
-      <div class="card">
-        <h2>💵 Revenus du mois — Détail</h2>
-        <div id="revenusDetail"></div>
-      </div>
+      <div class="card"><h2>💵 Revenus du mois — Détail</h2><div id="revenusDetail"></div></div>
       <div class="kpi-grid">
         <div class="kpi"><div class="kpi-label">Bénéfice</div><div class="kpi-value kpi-pos" id="kpiBenefice">0 F</div></div>
         <div class="kpi"><div class="kpi-label">Épargne</div><div class="kpi-value kpi-blue" id="kpiEpargne">0 F</div></div>
@@ -132,15 +141,9 @@
       </div>
       <div class="card"><h2>Dernières opérations</h2><div id="dernieresOps"></div></div>
     </div>
-    <div id="view-projets" class="hidden">
-      <div class="card"><h2>🎯 Projets <button onclick="openModal('projet')">+ Nouveau</button></h2><div id="projetsList"></div></div>
-    </div>
-    <div id="view-budgets" class="hidden">
-      <div class="card"><h2>📋 Budgets <button onclick="openModal('budget')">+ Nouveau</button></h2><div id="budgetsList"></div></div>
-    </div>
-    <div id="view-echeances" class="hidden">
-      <div class="card"><h2>📅 Échéances <button onclick="openModal('echeance')">+ Nouvelle</button></h2><div id="echeancesList"></div></div>
-    </div>
+    <div id="view-projets" class="hidden"><div class="card"><h2>🎯 Projets <button onclick="openModal('projet')">+ Nouveau</button></h2><div id="projetsList"></div></div></div>
+    <div id="view-budgets" class="hidden"><div class="card"><h2>📋 Budgets <button onclick="openModal('budget')">+ Nouveau</button></h2><div id="budgetsList"></div></div></div>
+    <div id="view-echeances" class="hidden"><div class="card"><h2>📅 Échéances <button onclick="openModal('echeance')">+ Nouvelle</button></h2><div id="echeancesList"></div></div></div>
     <div id="view-historique" class="hidden">
       <div class="card"><h2>📊 Évolution (6 mois)</h2><div id="histoChart"></div></div>
       <div class="card"><h2>📦 Clôtures</h2><div id="cloturesList"></div><button class="btn-submit" style="margin-top:12px" onclick="cloturerMois(moisCourant)">🔒 Clôturer</button></div>
@@ -156,6 +159,13 @@
 </div>
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal"><h2 id="modalTitle">Opération <button class="modal-close" onclick="closeModal()">✕</button></h2><div id="modalContent"></div></div>
+</div>
+<div class="loader-overlay" id="loaderOverlay">
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <div class="loader-text" id="loaderText">Chargement...</div>
+    <div class="loader-sub" id="loaderSub">Merci de patienter</div>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
@@ -183,20 +193,82 @@ let COMPTES = [], ECRITURES = [], PROJETS = [], BUDGETS = [], HISTORIQUE = [], E
 let moisCourant = new Date().toISOString().slice(0, 7);
 let modalType = 'depense';
 let selectedCategorie = null;
-let selectedRevenuSource = null;
 
 function fmt(n) { return Number(n || 0).toLocaleString('fr-FR').replace(/\u202f/g, ' ') + ' F'; }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function toast(msg, isError = false) { const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast show' + (isError ? ' error' : ''); setTimeout(() => t.className = 'toast', 3000); }
 
-async function apiGet(path) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }); if (!r.ok) throw new Error(await r.text()); return r.json(); }
-async function apiPost(path, body) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(await r.text()); return r.json(); }
-async function apiPatch(path, body) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'PATCH', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(await r.text()); }
-async function apiDelete(path) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }); if (!r.ok) throw new Error(await r.text()); }
+// Loader
+let _loaderCount = 0;
+function showLoader(text, sub) {
+  _loaderCount++;
+  document.getElementById('loaderText').textContent = text || 'Chargement...';
+  document.getElementById('loaderSub').textContent = sub || '';
+  document.getElementById('loaderOverlay').classList.add('show');
+}
+function hideLoader() {
+  _loaderCount = Math.max(0, _loaderCount - 1);
+  if (_loaderCount === 0) document.getElementById('loaderOverlay').classList.remove('show');
+}
+async function withLoader(text, sub, fn) {
+  showLoader(text, sub);
+  try { await fn(); }
+  catch (e) { toast(e.message || 'Erreur', true); }
+  finally { hideLoader(); }
+}
+
+// Toast avec annulation
+let _toastTimer = null;
+function toast(msg, isError = false, undoCallback = null) {
+  const t = document.getElementById('toast');
+  if (undoCallback) {
+    t.innerHTML = `${msg} <button class="toast-undo" id="toastUndo">Annuler</button>`;
+    document.getElementById('toastUndo').onclick = () => {
+      clearTimeout(_toastTimer);
+      t.className = 'toast';
+      undoCallback();
+    };
+  } else {
+    t.textContent = msg;
+  }
+  t.className = 'toast show' + (isError ? ' error' : '');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { t.className = 'toast'; t.innerHTML = ''; }, undoCallback ? 5000 : 3000);
+}
+
+async function askConfirm(message) {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay show';
+    overlay.style.zIndex = '300';
+    overlay.innerHTML = `<div class="modal" style="max-width:400px"><h2 style="margin-bottom:12px">Confirmation</h2><p style="font-size:15px;color:#e2e8f0;margin-bottom:20px;white-space:pre-line">${message}</p><div style="display:flex;gap:10px"><button class="btn-submit" style="margin:0;background:#334155" id="cfNo">Annuler</button><button class="btn-submit" style="margin:0;background:#dc2626" id="cfYes">Confirmer</button></div></div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#cfYes').onclick = () => { overlay.remove(); resolve(true); };
+    overlay.querySelector('#cfNo').onclick = () => { overlay.remove(); resolve(false); };
+    overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(false); } };
+  });
+}
+
+async function apiGet(path) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function apiPost(path, body) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function apiPatch(path, body) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'PATCH', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(await r.text());
+}
+async function apiDelete(path) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
+  if (!r.ok) throw new Error(await r.text());
+}
 
 async function loadAll() {
-  document.getElementById('loading').classList.remove('hidden');
-  document.getElementById('app').classList.add('hidden');
+  showLoader('Chargement...', 'Récupération des données');
   try {
     COMPTES = await apiGet('comptes?select=*&order=numero');
     ECRITURES = await apiGet('ecritures?select=*&order=date.desc,id.desc');
@@ -204,12 +276,37 @@ async function loadAll() {
     BUDGETS = await apiGet(`budgets_mensuels?select=*&mois=eq.${moisCourant}`);
     HISTORIQUE = await apiGet('historique_mensuel?select=*&order=mois.desc&limit=12');
     ECHEANCES = await apiGet('echeances?select=*&fait=eq.false&order=date');
-    renderAll();
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
+    renderAll();
   } catch (e) {
-    document.getElementById('loading').innerHTML = '❌ ' + e.message + '<br><br><button onclick="loadAll()" style="padding:12px 24px;border-radius:12px;background:#3b82f6;color:white;border:none">Réessayer</button>';
-  }
+    document.getElementById('loading').innerHTML = '❌ ' + e.message;
+  } finally { hideLoader(); }
+}
+
+async function refreshEcritures() {
+  await withLoader('Mise à jour...', '', async () => {
+    ECRITURES = await apiGet('ecritures?select=*&order=date.desc,id.desc');
+    renderRevenusDetail(); renderDernieresOps(); renderProjets(); renderBudgets(); updateKPIs();
+  });
+}
+async function refreshProjets() {
+  await withLoader('Mise à jour...', '', async () => {
+    PROJETS = await apiGet('projets?select=*&order=id');
+    renderProjets(); updateKPIs();
+  });
+}
+async function refreshBudgets() {
+  await withLoader('Mise à jour...', '', async () => {
+    BUDGETS = await apiGet(`budgets_mensuels?select=*&mois=eq.${moisCourant}`);
+    renderBudgets(); updateKPIs();
+  });
+}
+async function refreshEcheances() {
+  await withLoader('Mise à jour...', '', async () => {
+    ECHEANCES = await apiGet('echeances?select=*&fait=eq.false&order=date');
+    renderEcheances();
+  });
 }
 
 function soldeCompte(numero) {
@@ -234,8 +331,7 @@ function epargneProjet(p) { return ECRITURES.filter(e => e.projet_id == p.id).re
 function revenusMois(mois) { return ecrituresMois(mois).filter(e => { const cc = COMPTES.find(c => c.numero === e.compte_credit); return cc && cc.type === 'produit'; }); }
 function depensesImputees(revenuId) { return ECRITURES.filter(e => e.revenu_source_id == revenuId).reduce((s, e) => s + Number(e.montant), 0); }
 
-function renderAll() {
-  document.getElementById('moisLabel').textContent = new Date(moisCourant + '-15').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+function updateKPIs() {
   const dispo = soldeCompte(COMPTE_BANQUE) + soldeCompte("530");
   const rev = totalMois(moisCourant, 'produit');
   const dep = totalMois(moisCourant, 'charge');
@@ -260,7 +356,11 @@ function renderAll() {
   if (dispo < 0) alertes.push(`<div class="alert alert-danger">⚠️ Solde négatif : ${fmt(dispo)}</div>`);
   if (budgetTotal > 0 && dep > budgetTotal) alertes.push(`<div class="alert alert-danger">⚠️ Budget dépassé</div>`);
   document.getElementById('alertZone').innerHTML = alertes.join('');
+}
 
+function renderAll() {
+  document.getElementById('moisLabel').textContent = new Date(moisCourant + '-15').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  updateKPIs();
   renderRevenusDetail();
   renderDernieresOps();
   renderProjets();
@@ -272,7 +372,7 @@ function renderAll() {
 function renderRevenusDetail() {
   const div = document.getElementById('revenusDetail');
   const revs = revenusMois(moisCourant);
-  if (!revs.length) { div.innerHTML = '<div class="empty">Aucun revenu ce mois. Ajoute un revenu pour voir le détail.</div>'; return; }
+  if (!revs.length) { div.innerHTML = '<div class="empty">Aucun revenu ce mois</div>'; return; }
   div.innerHTML = revs.map(r => {
     const impute = depensesImputees(r.id);
     const reste = Number(r.montant) - impute;
@@ -377,7 +477,6 @@ function renderHistorique() {
   }
   const max = Math.max(...derniers.map(d => Math.max(d.rev, d.dep)), 1);
   div.innerHTML = '<div class="histo-bar">' + derniers.map(d => `<div class="histo-col"><div class="bar-rev" style="height:${(d.rev / max) * 100}%"></div><div class="bar-dep" style="height:${(d.dep / max) * 100}%"></div><div class="bar-label">${d.mois.slice(5)}</div></div>`).join('') + '</div>';
-
   const clotures = document.getElementById('cloturesList');
   if (!HISTORIQUE.length) { clotures.innerHTML = '<div class="empty">Aucune clôture</div>'; return; }
   clotures.innerHTML = HISTORIQUE.map(h => `<div class="op-item"><div class="op-left"><div class="op-name">${h.mois}</div><div class="op-date">Bénéfice : ${fmt(h.resultat)}</div></div><button class="icon-btn icon-del" onclick="deleteCloture(${h.id})">🗑️</button></div>`).join('');
@@ -390,106 +489,82 @@ function showView(name, btn) {
   btn.classList.add('active');
 }
 
-function changeMois(delta) { const d = new Date(moisCourant + '-15'); d.setMonth(d.getMonth() + delta); moisCourant = d.toISOString().slice(0, 7); loadAll(); }
+function changeMois(delta) {
+  const d = new Date(moisCourant + '-15'); d.setMonth(d.getMonth() + delta);
+  moisCourant = d.toISOString().slice(0, 7);
+  loadAll();
+}
 
 function openModal(type, id = null) {
-  modalType = type;
-  selectedCategorie = null;
-  selectedRevenuSource = null;
+  modalType = type; selectedCategorie = null;
   const modal = document.getElementById('modalContent');
   let title = '', content = '';
 
   if (type === 'depense') {
     title = '💸 Nouvelle dépense';
-    const revsDispos = revenusMois(moisCourant).filter(r => {
-      const impute = depensesImputees(r.id);
-      return (Number(r.montant) - impute) > 0;
-    });
-    const optionsRev = revsDispos.map(r => {
-      const reste = Number(r.montant) - depensesImputees(r.id);
-      return `<option value="${r.id}">${escapeHtml(r.libelle)} (reste ${fmt(reste)})</option>`;
-    }).join('');
-    content = `
-      <div class="form-group"><label>Combien ?</label><input type="number" id="mMontant" placeholder="0" inputmode="numeric"></div>
+    const revsDispos = revenusMois(moisCourant).filter(r => (Number(r.montant) - depensesImputees(r.id)) > 0);
+    const optionsRev = revsDispos.map(r => { const reste = Number(r.montant) - depensesImputees(r.id); return `<option value="${r.id}">${escapeHtml(r.libelle)} (reste ${fmt(reste)})</option>`; }).join('');
+    content = `<div class="form-group"><label>Combien ?</label><input type="number" id="mMontant" placeholder="0" inputmode="numeric"></div>
       <div class="form-group"><label>Catégorie</label><div class="chips" id="mChips">${CATEGORIES_DEPENSE.map(c => `<div class="chip" onclick="selectChip(this, '${c.nom}', '${c.compte}')">${c.emoji} ${c.nom}</div>`).join('')}</div></div>
-      <div class="form-group"><label>Sur quel revenu l'imputer ?</label>${revsDispos.length ? `<select id="mRevenuSource">${optionsRev}</select>` : '<div class="alert alert-warn">Aucun revenu disponible. Ajoute d\'abord un revenu.</div>'}</div>
+      <div class="form-group"><label>Sur quel revenu ?</label>${revsDispos.length ? `<select id="mRevenuSource">${optionsRev}</select>` : '<div class="alert alert-warn">Aucun revenu disponible. Ajoute d\'abord un revenu.</div>'}</div>
       <div class="form-group"><label>Détail</label><input type="text" id="mDetail" placeholder="Optionnel"></div>
-      <button class="btn-submit danger" onclick="submitDepense()">💸 Ajouter</button>
-    `;
+      <button class="btn-submit danger" onclick="submitDepense()">💸 Ajouter</button>`;
   } else if (type === 'revenu') {
     title = '💵 Nouveau revenu';
-    content = `
-      <div class="form-group"><label>Combien ?</label><input type="number" id="mMontant" placeholder="0" inputmode="numeric"></div>
+    content = `<div class="form-group"><label>Combien ?</label><input type="number" id="mMontant" placeholder="0" inputmode="numeric"></div>
       <div class="form-group"><label>Source</label><div class="chips" id="mChips">${CATEGORIES_REVENU.map(c => `<div class="chip" onclick="selectChip(this, '${c.nom}', '${c.compte}')">${c.emoji} ${c.nom}</div>`).join('')}</div></div>
       <div class="form-group"><label>Détail</label><input type="text" id="mDetail" placeholder="Optionnel"></div>
-      <button class="btn-submit success" onclick="submitRevenu()">💵 Ajouter</button>
-    `;
+      <button class="btn-submit success" onclick="submitRevenu()">💵 Ajouter</button>`;
   } else if (type === 'projet') {
     title = '🎯 Nouveau projet';
-    content = `
-      <div class="form-group"><label>Nom</label><input type="text" id="pNom" placeholder="Terrain"></div>
+    content = `<div class="form-group"><label>Nom</label><input type="text" id="pNom" placeholder="Terrain"></div>
       <div class="form-group"><label>Type</label><select id="pType"><option value="epargne">💎 Épargne</option><option value="investissement">🏗️ Investissement</option></select></div>
       <div class="form-group"><label>Objectif</label><input type="number" id="pObjectif" placeholder="1000000"></div>
-      <button class="btn-submit" onclick="submitProjet()">Créer</button>
-    `;
+      <button class="btn-submit" onclick="submitProjet()">Créer</button>`;
   } else if (type === 'edit_projet') {
     const p = PROJETS.find(x => x.id == id);
     title = '✏️ Modifier projet';
-    content = `
-      <div class="form-group"><label>Nom</label><input type="text" id="pNom" value="${escapeHtml(p.nom)}"></div>
+    content = `<div class="form-group"><label>Nom</label><input type="text" id="pNom" value="${escapeHtml(p.nom)}"></div>
       <div class="form-group"><label>Type</label><select id="pType"><option value="epargne" ${p.type==='epargne'?'selected':''}>Épargne</option><option value="investissement" ${p.type==='investissement'?'selected':''}>Investissement</option></select></div>
       <div class="form-group"><label>Objectif</label><input type="number" id="pObjectif" value="${p.objectif}"></div>
-      <button class="btn-submit" onclick="submitEditProjet(${id})">💾</button>
-    `;
+      <button class="btn-submit" onclick="submitEditProjet(${id})">💾</button>`;
   } else if (type === 'epargne') {
     const p = PROJETS.find(x => x.id == id);
     title = '💎 Épargner';
-    content = `
-      <div class="form-group"><label>Projet</label><input type="text" value="${escapeHtml(p.nom)}" readonly></div>
+    content = `<div class="form-group"><label>Projet</label><input type="text" value="${escapeHtml(p.nom)}" readonly></div>
       <div class="form-group"><label>Montant</label><input type="number" id="eMontant" placeholder="10000"></div>
-      <button class="btn-submit success" onclick="submitEpargne(${id})">💎</button>
-    `;
+      <button class="btn-submit success" onclick="submitEpargne(${id})">💎</button>`;
   } else if (type === 'budget') {
     title = '📋 Nouveau budget';
-    content = `
-      <div class="form-group"><label>Catégorie</label><input type="text" id="bCat" placeholder="Nourriture"></div>
+    content = `<div class="form-group"><label>Catégorie</label><input type="text" id="bCat" placeholder="Nourriture"></div>
       <div class="form-group"><label>Montant prévu</label><input type="number" id="bMontant" placeholder="30000"></div>
-      <button class="btn-submit" onclick="submitBudget()">Créer</button>
-    `;
+      <button class="btn-submit" onclick="submitBudget()">Créer</button>`;
   } else if (type === 'edit_budget') {
     const b = BUDGETS.find(x => x.id == id);
     title = '✏️ Modifier budget';
-    content = `
-      <div class="form-group"><label>Catégorie</label><input type="text" id="bCat" value="${escapeHtml(b.categorie)}"></div>
+    content = `<div class="form-group"><label>Catégorie</label><input type="text" id="bCat" value="${escapeHtml(b.categorie)}"></div>
       <div class="form-group"><label>Montant</label><input type="number" id="bMontant" value="${b.montant_prevu}"></div>
-      <button class="btn-submit" onclick="submitEditBudget(${id})">💾</button>
-    `;
+      <button class="btn-submit" onclick="submitEditBudget(${id})">💾</button>`;
   } else if (type === 'echeance') {
     title = '📅 Nouvelle échéance';
-    content = `
-      <div class="form-group"><label>Nom</label><input type="text" id="ecLibelle" placeholder="Loyer"></div>
+    content = `<div class="form-group"><label>Nom</label><input type="text" id="ecLibelle" placeholder="Loyer"></div>
       <div class="form-group"><label>Date</label><input type="date" id="ecDate"></div>
       <div class="form-group"><label>Montant</label><input type="number" id="ecMontant" placeholder="0"></div>
-      <button class="btn-submit" onclick="submitEcheance()">Ajouter</button>
-    `;
+      <button class="btn-submit" onclick="submitEcheance()">Ajouter</button>`;
   } else if (type === 'edit_echeance') {
     const e = ECHEANCES.find(x => x.id == id);
     title = '✏️ Modifier échéance';
-    content = `
-      <div class="form-group"><label>Nom</label><input type="text" id="ecLibelle" value="${escapeHtml(e.libelle)}"></div>
+    content = `<div class="form-group"><label>Nom</label><input type="text" id="ecLibelle" value="${escapeHtml(e.libelle)}"></div>
       <div class="form-group"><label>Date</label><input type="date" id="ecDate" value="${e.date}"></div>
       <div class="form-group"><label>Montant</label><input type="number" id="ecMontant" value="${e.montant}"></div>
-      <button class="btn-submit" onclick="submitEditEcheance(${id})">💾</button>
-    `;
+      <button class="btn-submit" onclick="submitEditEcheance(${id})">💾</button>`;
   } else if (type === 'edit_ecriture') {
     const e = ECRITURES.find(x => x.id == id);
     title = '✏️ Modifier opération';
-    content = `
-      <div class="form-group"><label>Libellé</label><input type="text" id="mDetail" value="${escapeHtml(e.libelle)}"></div>
+    content = `<div class="form-group"><label>Libellé</label><input type="text" id="mDetail" value="${escapeHtml(e.libelle)}"></div>
       <div class="form-group"><label>Montant</label><input type="number" id="mMontant" value="${e.montant}"></div>
       <div class="form-group"><label>Date</label><input type="date" id="mDate" value="${e.date}"></div>
-      <button class="btn-submit" onclick="submitEditEcriture(${id})">💾</button>
-    `;
+      <button class="btn-submit" onclick="submitEditEcriture(${id})">💾</button>`;
   }
   document.getElementById('modalTitle').innerHTML = title + ' <button class="modal-close" onclick="closeModal()">✕</button>';
   modal.innerHTML = content;
@@ -509,85 +584,243 @@ async function submitDepense() {
   const rev = ECRITURES.find(e => e.id === revenuId);
   const reste = Number(rev.montant) - depensesImputees(revenuId);
   if (montant > reste) {
-    if (!confirm(`⚠️ Cette dépense (${fmt(montant)}) dépasse le reste disponible sur "${rev.libelle}" (${fmt(reste)}).\n\nContinuer quand même ?`)) return;
+    if (!(await askConfirm(`⚠️ Dépense (${fmt(montant)}) dépasse le reste de "${rev.libelle}" (${fmt(reste)}).\n\nContinuer ?`))) return;
   }
-  const date = new Date().toISOString().slice(0, 10);
-  const mois = date.slice(0, 7);
-  try {
+  await withLoader('Ajout de la dépense...', '', async () => {
+    const date = new Date().toISOString().slice(0, 10);
+    const mois = date.slice(0, 7);
     await apiPost('ecritures', { date, libelle: detail || selectedCategorie.nom, montant, compte_debit: selectedCategorie.compte, compte_credit: COMPTE_BANQUE, mois, type_operation: 'depense', revenu_source_id: revenuId });
     toast('💸 Dépense ajoutée');
-    notify('💸 Dépense', (detail || selectedCategorie.nom) + ' — ' + fmt(montant) + ' (sur ' + rev.libelle + ')');
-    closeModal(); loadAll();
-  } catch (e) { toast(e.message, true); }
+    notify('💸 Dépense', (detail || selectedCategorie.nom) + ' — ' + fmt(montant));
+    closeModal();
+    ECRITURES.unshift({ id: Date.now(), date, libelle: detail || selectedCategorie.nom, montant, compte_debit: selectedCategorie.compte, compte_credit: COMPTE_BANQUE, mois, type_operation: 'depense', revenu_source_id: revenuId });
+    renderRevenusDetail(); renderDernieresOps(); updateKPIs();
+  });
 }
 
 async function submitRevenu() {
   const montant = Number(document.getElementById('mMontant').value);
   const detail = document.getElementById('mDetail').value.trim();
   if (!montant || !selectedCategorie) { toast('Champs manquants', true); return; }
-  const date = new Date().toISOString().slice(0, 10);
-  const mois = date.slice(0, 7);
-  try {
+  await withLoader('Ajout du revenu...', '', async () => {
+    const date = new Date().toISOString().slice(0, 10);
+    const mois = date.slice(0, 7);
     await apiPost('ecritures', { date, libelle: detail || selectedCategorie.nom, montant, compte_debit: COMPTE_BANQUE, compte_credit: selectedCategorie.compte, mois, type_operation: 'revenu' });
     toast('💵 Revenu ajouté');
     notify('💵 Revenu', (detail || selectedCategorie.nom) + ' — ' + fmt(montant));
-    closeModal(); loadAll();
-  } catch (e) { toast(e.message, true); }
+    closeModal();
+    await refreshEcritures();
+  });
 }
 
-async function submitProjet() { const nom = document.getElementById('pNom').value.trim(); const type = document.getElementById('pType').value; const obj = Number(document.getElementById('pObjectif').value); if (!nom || !obj) { toast('Champs manquants', true); return; } try { await apiPost('projets', { nom, type, objectif: obj }); toast('✓'); closeModal(); loadAll(); } catch (e) { toast(e.message, true); } }
-async function submitEditProjet(id) { const nom = document.getElementById('pNom').value.trim(); const type = document.getElementById('pType').value; const obj = Number(document.getElementById('pObjectif').value); if (!nom || !obj) { toast('Champs manquants', true); return; } try { await apiPatch(`projets?id=eq.${id}`, { nom, type, objectif: obj }); toast('✓'); closeModal(); loadAll(); } catch (e) { toast(e.message, true); } }
-async function deleteProjet(id) { if (!confirm('Supprimer ?')) return; try { await apiDelete(`projets?id=eq.${id}`); toast('🗑️'); loadAll(); } catch (e) { toast(e.message, true); } }
+async function submitProjet() {
+  const nom = document.getElementById('pNom').value.trim();
+  const type = document.getElementById('pType').value;
+  const obj = Number(document.getElementById('pObjectif').value);
+  if (!nom || !obj) { toast('Champs manquants', true); return; }
+  await withLoader('Création du projet...', '', async () => {
+    await apiPost('projets', { nom, type, objectif: obj });
+    toast('🎯 Projet créé');
+    closeModal();
+    await refreshProjets();
+  });
+}
+
+async function submitEditProjet(id) {
+  const nom = document.getElementById('pNom').value.trim();
+  const type = document.getElementById('pType').value;
+  const obj = Number(document.getElementById('pObjectif').value);
+  if (!nom || !obj) { toast('Champs manquants', true); return; }
+  await withLoader('Enregistrement...', '', async () => {
+    await apiPatch(`projets?id=eq.${id}`, { nom, type, objectif: obj });
+    toast('✓ Modifié');
+    closeModal();
+    await refreshProjets();
+  });
+}
+
+async function deleteProjet(id) {
+  const p = PROJETS.find(x => x.id === id);
+  await withLoader('Suppression...', '', async () => {
+    const backup = await apiGet(`projets?id=eq.${id}&select=*`);
+    await apiDelete(`projets?id=eq.${id}`);
+    PROJETS = PROJETS.filter(x => x.id !== id);
+    renderProjets(); updateKPIs();
+    toast(`🗑️ Projet "${p.nom}"`, false, async () => {
+      await apiPost('projets', backup[0]);
+      await refreshProjets();
+      toast('✓ Restauré');
+    });
+  });
+}
 
 async function submitEpargne(id) {
   const m = Number(document.getElementById('eMontant').value);
   if (!m) { toast('Montant manquant', true); return; }
   const p = PROJETS.find(x => x.id == id);
-  const date = new Date().toISOString().slice(0, 10);
-  const mois = date.slice(0, 7);
-  try { await apiPost('ecritures', { date, libelle: 'Épargne ' + p.nom, montant: m, compte_debit: '580', compte_credit: '512', mois, type_operation: 'epargne', projet_id: id }); toast('✓'); closeModal(); loadAll(); } catch (e) { toast(e.message, true); }
+  await withLoader('Épargne...', '', async () => {
+    const date = new Date().toISOString().slice(0, 10);
+    const mois = date.slice(0, 7);
+    await apiPost('ecritures', { date, libelle: 'Épargne ' + p.nom, montant: m, compte_debit: '580', compte_credit: '512', mois, type_operation: 'epargne', projet_id: id });
+    toast('💎 Épargne ajoutée');
+    closeModal();
+    await refreshEcritures();
+    await refreshProjets();
+  });
 }
 
-async function submitBudget() { const cat = document.getElementById('bCat').value.trim(); const m = Number(document.getElementById('bMontant').value); if (!cat || !m) { toast('Champs manquants', true); return; } try { await apiPost('budgets_mensuels', { mois: moisCourant, categorie: cat, montant_prevu: m }); toast('✓'); closeModal(); loadAll(); } catch (e) { toast(e.message, true); } }
-async function submitEditBudget(id) { const cat = document.getElementById('bCat').value.trim(); const m = Number(document.getElementById('bMontant').value); if (!cat || !m) { toast('Champs manquants', true); return; } try { await apiPatch(`budgets_mensuels?id=eq.${id}`, { categorie: cat, montant_prevu: m }); toast('✓'); closeModal(); loadAll(); } catch (e) { toast(e.message, true); } }
-async function deleteBudget(id) { if (!confirm('Supprimer ?')) return; try { await apiDelete(`budgets_mensuels?id=eq.${id}`); toast('🗑️'); loadAll(); } catch (e) { toast(e.message, true); } }
+async function submitBudget() {
+  const cat = document.getElementById('bCat').value.trim();
+  const m = Number(document.getElementById('bMontant').value);
+  if (!cat || !m) { toast('Champs manquants', true); return; }
+  await withLoader('Création budget...', '', async () => {
+    await apiPost('budgets_mensuels', { mois: moisCourant, categorie: cat, montant_prevu: m });
+    toast('📋 Budget créé');
+    closeModal();
+    await refreshBudgets();
+  });
+}
 
-async function submitEcheance() { const libelle = document.getElementById('ecLibelle').value.trim(); const date = document.getElementById('ecDate').value; const m = Number(document.getElementById('ecMontant').value) || 0; if (!libelle || !date) { toast('Champs manquants', true); return; } try { await apiPost('echeances', { libelle, date, montant: m }); toast('✓'); closeModal(); loadAll(); } catch (e) { toast(e.message, true); } }
-async function submitEditEcheance(id) { const libelle = document.getElementById('ecLibelle').value.trim(); const date = document.getElementById('ecDate').value; const m = Number(document.getElementById('ecMontant').value) || 0; if (!libelle || !date) { toast('Champs manquants', true); return; } try { await apiPatch(`echeances?id=eq.${id}`, { libelle, date, montant: m }); toast('✓'); closeModal(); loadAll(); } catch (e) { toast(e.message, true); } }
-async function deleteEcheance(id) { if (!confirm('Supprimer ?')) return; try { await apiDelete(`echeances?id=eq.${id}`); toast('🗑️'); loadAll(); } catch (e) { toast(e.message, true); } }
+async function submitEditBudget(id) {
+  const cat = document.getElementById('bCat').value.trim();
+  const m = Number(document.getElementById('bMontant').value);
+  if (!cat || !m) { toast('Champs manquants', true); return; }
+  await withLoader('Enregistrement...', '', async () => {
+    await apiPatch(`budgets_mensuels?id=eq.${id}`, { categorie: cat, montant_prevu: m });
+    toast('✓');
+    closeModal();
+    await refreshBudgets();
+  });
+}
 
-async function submitEditEcriture(id) { const libelle = document.getElementById('mDetail').value.trim(); const m = Number(document.getElementById('mMontant').value); const date = document.getElementById('mDate').value; if (!libelle || !m || !date) { toast('Champs manquants', true); return; } try { await apiPatch(`ecritures?id=eq.${id}`, { libelle, montant: m, date, mois: date.slice(0, 7) }); toast('✓'); closeModal(); loadAll(); } catch (e) { toast(e.message, true); } }
-async function deleteEcriture(id) { const e = ECRITURES.find(x => x.id === id); if (e && e.cloture) { toast('🔒 Mois clôturé', true); return; } if (!confirm('Supprimer ?')) return; try { await apiDelete(`ecritures?id=eq.${id}`); toast('🗑️'); loadAll(); } catch (e) { toast(e.message, true); } }
+async function deleteBudget(id) {
+  const b = BUDGETS.find(x => x.id === id);
+  await withLoader('Suppression...', '', async () => {
+    const backup = await apiGet(`budgets_mensuels?id=eq.${id}&select=*`);
+    await apiDelete(`budgets_mensuels?id=eq.${id}`);
+    BUDGETS = BUDGETS.filter(x => x.id !== id);
+    renderBudgets(); updateKPIs();
+    toast(`🗑️ Budget "${b.categorie}"`, false, async () => {
+      await apiPost('budgets_mensuels', backup[0]);
+      await refreshBudgets();
+      toast('✓ Restauré');
+    });
+  });
+}
+
+async function submitEcheance() {
+  const libelle = document.getElementById('ecLibelle').value.trim();
+  const date = document.getElementById('ecDate').value;
+  const m = Number(document.getElementById('ecMontant').value) || 0;
+  if (!libelle || !date) { toast('Champs manquants', true); return; }
+  await withLoader('Création échéance...', '', async () => {
+    await apiPost('echeances', { libelle, date, montant: m });
+    toast('📅 Échéance ajoutée');
+    closeModal();
+    await refreshEcheances();
+  });
+}
+
+async function submitEditEcheance(id) {
+  const libelle = document.getElementById('ecLibelle').value.trim();
+  const date = document.getElementById('ecDate').value;
+  const m = Number(document.getElementById('ecMontant').value) || 0;
+  if (!libelle || !date) { toast('Champs manquants', true); return; }
+  await withLoader('Enregistrement...', '', async () => {
+    await apiPatch(`echeances?id=eq.${id}`, { libelle, date, montant: m });
+    toast('✓');
+    closeModal();
+    await refreshEcheances();
+  });
+}
+
+async function deleteEcheance(id) {
+  const e = ECHEANCES.find(x => x.id === id);
+  await withLoader('Suppression...', '', async () => {
+    const backup = await apiGet(`echeances?id=eq.${id}&select=*`);
+    await apiDelete(`echeances?id=eq.${id}`);
+    ECHEANCES = ECHEANCES.filter(x => x.id !== id);
+    renderEcheances();
+    toast(`🗑️ Échéance "${e.libelle}"`, false, async () => {
+      await apiPost('echeances', backup[0]);
+      await refreshEcheances();
+      toast('✓ Restauré');
+    });
+  });
+}
+
+async function submitEditEcriture(id) {
+  const libelle = document.getElementById('mDetail').value.trim();
+  const m = Number(document.getElementById('mMontant').value);
+  const date = document.getElementById('mDate').value;
+  if (!libelle || !m || !date) { toast('Champs manquants', true); return; }
+  await withLoader('Enregistrement...', '', async () => {
+    await apiPatch(`ecritures?id=eq.${id}`, { libelle, montant: m, date, mois: date.slice(0, 7) });
+    toast('✓');
+    closeModal();
+    await refreshEcritures();
+  });
+}
+
+async function deleteEcriture(id) {
+  const e = ECRITURES.find(x => x.id === id);
+  if (e && e.cloture) { toast('🔒 Mois clôturé', true); return; }
+  await withLoader('Suppression...', '', async () => {
+    const backup = await apiGet(`ecritures?id=eq.${id}&select=*`);
+    await apiDelete(`ecritures?id=eq.${id}`);
+    ECRITURES = ECRITURES.filter(x => x.id !== id);
+    renderRevenusDetail(); renderDernieresOps(); updateKPIs();
+    toast(`🗑️ "${e.libelle}"`, false, async () => {
+      await apiPost('ecritures', backup[0]);
+      await refreshEcritures();
+      toast('✓ Restauré');
+    });
+  });
+}
+
+async function deleteCloture(id) {
+  await withLoader('Suppression...', '', async () => {
+    const backup = await apiGet(`historique_mensuel?id=eq.${id}&select=*`);
+    await apiDelete(`historique_mensuel?id=eq.${id}`);
+    HISTORIQUE = HISTORIQUE.filter(x => x.id !== id);
+    renderHistorique();
+    toast(`🗑️ Clôture`, false, async () => {
+      await apiPost('historique_mensuel', backup[0]);
+      HISTORIQUE = await apiGet('historique_mensuel?select=*&order=mois.desc&limit=12');
+      renderHistorique();
+      toast('✓ Restauré');
+    });
+  });
+}
 
 async function marquerPaye(id, libelle, m) {
-  if (!confirm(`Marquer "${libelle}" payé ?`)) return;
-  try {
+  await withLoader('Paiement...', '', async () => {
     if (m > 0) {
       const date = new Date().toISOString().slice(0, 10);
       const mois = date.slice(0, 7);
       await apiPost('ecritures', { date, libelle, montant: m, compte_debit: '601', compte_credit: '512', mois, type_operation: 'depense' });
     }
     await apiPatch(`echeances?id=eq.${id}`, { fait: true });
-    toast('✓ Payé'); loadAll();
-  } catch (e) { toast(e.message, true); }
+    toast('✓ Payé');
+    await refreshEcheances();
+    await refreshEcritures();
+  });
 }
 
 async function cloturerMois(mois) {
-  if (!confirm(`Clôturer ${mois} ?`)) return;
-  try {
+  if (!(await askConfirm(`Clôturer ${mois} ?\nLes écritures seront verrouillées.`))) return;
+  await withLoader('Clôture...', '', async () => {
     const ecMois = ECRITURES.filter(e => e.mois === mois);
     if (!ecMois.length) { toast('Aucune écriture', true); return; }
     const rev = totalMois(mois, 'produit');
     const dep = totalMois(mois, 'charge');
-    const b = rev - dep;
-    await apiPost('historique_mensuel', { mois, total_produits: rev, total_charges: dep, resultat: b, solde_banque: soldeCompte('512'), solde_caisse: soldeCompte('530'), patrimoine: 0, epargne_cumulee: PROJETS.reduce((s, p) => s + epargneProjet(p), 0) });
+    await apiPost('historique_mensuel', { mois, total_produits: rev, total_charges: dep, resultat: rev - dep, solde_banque: soldeCompte('512'), solde_caisse: soldeCompte('530'), patrimoine: 0, epargne_cumulee: PROJETS.reduce((s, p) => s + epargneProjet(p), 0) });
     await apiPatch(`ecritures?mois=eq.${mois}`, { cloture: true });
-    toast('📦 Clôturé'); notify('📦 Clôturé', mois + ' : ' + fmt(b));
-    loadAll();
-  } catch (e) { toast(e.message, true); }
+    toast('📦 Clôturé');
+    notify('📦 Clôturé', mois + ' : ' + fmt(rev - dep));
+    await loadAll();
+  });
 }
-
-async function deleteCloture(id) { if (!confirm('Supprimer cette clôture ?')) return; try { await apiDelete(`historique_mensuel?id=eq.${id}`); toast('🗑️'); loadAll(); } catch (e) { toast(e.message, true); } }
 
 function exportJSON() {
   const data = { version: 1, exported_at: new Date().toISOString(), comptes: COMPTES, ecritures: ECRITURES, projets: PROJETS, budgets_mensuels: BUDGETS, historique_mensuel: HISTORIQUE, echeances: ECHEANCES };
@@ -597,19 +830,19 @@ function exportJSON() {
   a.href = url; a.download = `rick-finance-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click();
   URL.revokeObjectURL(url); toast('📥 Téléchargé');
 }
+
 async function importJSON(event) {
   const file = event.target.files[0]; if (!file) return;
-  if (!confirm('Importer ce fichier ?')) return;
-  try {
+  await withLoader('Import...', '', async () => {
     const data = JSON.parse(await file.text());
     let count = 0;
     if (data.ecritures?.length) {
       const r = await fetch(`${SUPABASE_URL}/rest/v1/ecritures`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(data.ecritures.map(e => ({ date: e.date, libelle: e.libelle, montant: e.montant, compte_debit: e.compte_debit, compte_credit: e.compte_credit, mois: e.mois, type_operation: e.type_operation || 'depense' }))) });
       if (r.ok) count += data.ecritures.length;
     }
-    toast(`📤 ${count} importés`);
-    loadAll();
-  } catch (e) { toast('Erreur : ' + e.message, true); }
+    toast(`📤 ${count} éléments importés`);
+    await loadAll();
+  });
   event.target.value = '';
 }
 
