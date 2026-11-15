@@ -197,7 +197,6 @@ let selectedCategorie = null;
 function fmt(n) { return Number(n || 0).toLocaleString('fr-FR').replace(/\u202f/g, ' ') + ' F'; }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-// Loader
 let _loaderCount = 0;
 function showLoader(text, sub) {
   _loaderCount++;
@@ -216,20 +215,13 @@ async function withLoader(text, sub, fn) {
   finally { hideLoader(); }
 }
 
-// Toast avec annulation
 let _toastTimer = null;
 function toast(msg, isError = false, undoCallback = null) {
   const t = document.getElementById('toast');
   if (undoCallback) {
     t.innerHTML = `${msg} <button class="toast-undo" id="toastUndo">Annuler</button>`;
-    document.getElementById('toastUndo').onclick = () => {
-      clearTimeout(_toastTimer);
-      t.className = 'toast';
-      undoCallback();
-    };
-  } else {
-    t.textContent = msg;
-  }
+    document.getElementById('toastUndo').onclick = () => { clearTimeout(_toastTimer); t.className = 'toast'; t.innerHTML = ''; undoCallback(); };
+  } else { t.textContent = msg; }
   t.className = 'toast show' + (isError ? ' error' : '');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => { t.className = 'toast'; t.innerHTML = ''; }, undoCallback ? 5000 : 3000);
@@ -248,24 +240,10 @@ async function askConfirm(message) {
   });
 }
 
-async function apiGet(path) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function apiPost(path, body) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }, body: JSON.stringify(body) });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function apiPatch(path, body) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'PATCH', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  if (!r.ok) throw new Error(await r.text());
-}
-async function apiDelete(path) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
-  if (!r.ok) throw new Error(await r.text());
-}
+async function apiGet(path) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }); if (!r.ok) throw new Error(await r.text()); return r.json(); }
+async function apiPost(path, body) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(await r.text()); return r.json(); }
+async function apiPatch(path, body) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'PATCH', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(await r.text()); }
+async function apiDelete(path) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }); if (!r.ok) throw new Error(await r.text()); }
 
 async function loadAll() {
   showLoader('Chargement...', 'Récupération des données');
@@ -279,9 +257,8 @@ async function loadAll() {
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     renderAll();
-  } catch (e) {
-    document.getElementById('loading').innerHTML = '❌ ' + e.message;
-  } finally { hideLoader(); }
+  } catch (e) { document.getElementById('loading').innerHTML = '❌ ' + e.message; }
+  finally { hideLoader(); }
 }
 
 async function refreshEcritures() {
@@ -394,7 +371,7 @@ function renderRevenusDetail() {
 function renderDernieresOps() {
   const div = document.getElementById('dernieresOps');
   const ops = ecrituresMois(moisCourant).slice(0, 20);
-  if (!ops.length) { div.innerHTML = '<div class="empty">Aucune opération</div>'; return; }
+  if (!ops.length) { div.innerHTML = '<div class="empty">Aucune opération ce mois</div>'; return; }
   div.innerHTML = ops.map(e => {
     const estRevenu = COMPTES.find(c => c.numero === e.compte_credit)?.type === 'produit';
     const signe = estRevenu ? '+' : '-';
@@ -530,10 +507,13 @@ function openModal(type, id = null) {
       <button class="btn-submit" onclick="submitEditProjet(${id})">💾</button>`;
   } else if (type === 'epargne') {
     const p = PROJETS.find(x => x.id == id);
-    title = '💎 Épargner';
+    title = '💎 Épargner sur ' + escapeHtml(p.nom);
+    const revsDispos = revenusMois(moisCourant).filter(r => (Number(r.montant) - depensesImputees(r.id)) > 0);
+    const optionsRev = revsDispos.map(r => { const reste = Number(r.montant) - depensesImputees(r.id); return `<option value="${r.id}">${escapeHtml(r.libelle)} (reste ${fmt(reste)})</option>`; }).join('');
     content = `<div class="form-group"><label>Projet</label><input type="text" value="${escapeHtml(p.nom)}" readonly></div>
-      <div class="form-group"><label>Montant</label><input type="number" id="eMontant" placeholder="10000"></div>
-      <button class="btn-submit success" onclick="submitEpargne(${id})">💎</button>`;
+      <div class="form-group"><label>Montant à épargner</label><input type="number" id="eMontant" placeholder="10000"></div>
+      <div class="form-group"><label>Sur quel revenu ?</label>${revsDispos.length ? `<select id="eRevenuSource">${optionsRev}</select>` : '<div class="alert alert-warn">Aucun revenu disponible.</div>'}</div>
+      <button class="btn-submit success" onclick="submitEpargne(${id})">💎 Épargner</button>`;
   } else if (type === 'budget') {
     title = '📋 Nouveau budget';
     content = `<div class="form-group"><label>Catégorie</label><input type="text" id="bCat" placeholder="Nourriture"></div>
@@ -584,17 +564,17 @@ async function submitDepense() {
   const rev = ECRITURES.find(e => e.id === revenuId);
   const reste = Number(rev.montant) - depensesImputees(revenuId);
   if (montant > reste) {
-    if (!(await askConfirm(`⚠️ Dépense (${fmt(montant)}) dépasse le reste de "${rev.libelle}" (${fmt(reste)}).\n\nContinuer ?`))) return;
+    if (!(await askConfirm(`⚠️ Cette dépense (${fmt(montant)}) dépasse le reste de "${rev.libelle}" (${fmt(reste)}).\n\nIl te manque ${fmt(montant - reste)}.\n\nContinuer quand même ?`))) return;
   }
   await withLoader('Ajout de la dépense...', '', async () => {
-    const date = new Date().toISOString().slice(0, 10);
+    const moisActuelReel = new Date().toISOString().slice(0, 7);
+    const date = (moisCourant === moisActuelReel) ? new Date().toISOString().slice(0, 10) : moisCourant + '-15';
     const mois = date.slice(0, 7);
     await apiPost('ecritures', { date, libelle: detail || selectedCategorie.nom, montant, compte_debit: selectedCategorie.compte, compte_credit: COMPTE_BANQUE, mois, type_operation: 'depense', revenu_source_id: revenuId });
     toast('💸 Dépense ajoutée');
-    notify('💸 Dépense', (detail || selectedCategorie.nom) + ' — ' + fmt(montant));
+    notify('💸 Dépense', (detail || selectedCategorie.nom) + ' — ' + fmt(montant) + ' (sur ' + rev.libelle + ')');
     closeModal();
-    ECRITURES.unshift({ id: Date.now(), date, libelle: detail || selectedCategorie.nom, montant, compte_debit: selectedCategorie.compte, compte_credit: COMPTE_BANQUE, mois, type_operation: 'depense', revenu_source_id: revenuId });
-    renderRevenusDetail(); renderDernieresOps(); updateKPIs();
+    await refreshEcritures();
   });
 }
 
@@ -603,7 +583,8 @@ async function submitRevenu() {
   const detail = document.getElementById('mDetail').value.trim();
   if (!montant || !selectedCategorie) { toast('Champs manquants', true); return; }
   await withLoader('Ajout du revenu...', '', async () => {
-    const date = new Date().toISOString().slice(0, 10);
+    const moisActuelReel = new Date().toISOString().slice(0, 7);
+    const date = (moisCourant === moisActuelReel) ? new Date().toISOString().slice(0, 10) : moisCourant + '-15';
     const mois = date.slice(0, 7);
     await apiPost('ecritures', { date, libelle: detail || selectedCategorie.nom, montant, compte_debit: COMPTE_BANQUE, compte_credit: selectedCategorie.compte, mois, type_operation: 'revenu' });
     toast('💵 Revenu ajouté');
@@ -656,13 +637,23 @@ async function deleteProjet(id) {
 
 async function submitEpargne(id) {
   const m = Number(document.getElementById('eMontant').value);
+  const selRev = document.getElementById('eRevenuSource');
   if (!m) { toast('Montant manquant', true); return; }
+  if (!selRev || !selRev.value) { toast('Choisis un revenu', true); return; }
+  const revenuId = Number(selRev.value);
+  const rev = ECRITURES.find(e => e.id === revenuId);
+  const reste = Number(rev.montant) - depensesImputees(revenuId);
+  if (m > reste) {
+    if (!(await askConfirm(`⚠️ Cette épargne (${fmt(m)}) dépasse le reste de "${rev.libelle}" (${fmt(reste)}).\n\nIl te manque ${fmt(m - reste)}.\n\nContinuer quand même ?`))) return;
+  }
   const p = PROJETS.find(x => x.id == id);
   await withLoader('Épargne...', '', async () => {
-    const date = new Date().toISOString().slice(0, 10);
+    const moisActuelReel = new Date().toISOString().slice(0, 7);
+    const date = (moisCourant === moisActuelReel) ? new Date().toISOString().slice(0, 10) : moisCourant + '-15';
     const mois = date.slice(0, 7);
-    await apiPost('ecritures', { date, libelle: 'Épargne ' + p.nom, montant: m, compte_debit: '580', compte_credit: '512', mois, type_operation: 'epargne', projet_id: id });
+    await apiPost('ecritures', { date, libelle: 'Épargne ' + p.nom, montant: m, compte_debit: '580', compte_credit: '512', mois, type_operation: 'epargne', projet_id: id, revenu_source_id: revenuId });
     toast('💎 Épargne ajoutée');
+    notify('💎 Épargne', p.nom + ' : +' + fmt(m) + ' (sur ' + rev.libelle + ')');
     closeModal();
     await refreshEcritures();
     await refreshProjets();
