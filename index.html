@@ -25,14 +25,16 @@
   .action-btn .emoji { font-size: 28px; }
   .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 16px; margin-bottom: 16px; }
   .card h2 { font-size: 15px; margin-bottom: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-  .op-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; }
+  .op-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; gap: 8px; }
   .op-item:last-child { border-bottom: none; }
   .op-left { flex: 1; min-width: 0; }
   .op-name { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .op-date { font-size: 12px; color: #94a3b8; margin-top: 2px; }
-  .op-amount { font-size: 15px; font-weight: 700; white-space: nowrap; margin-left: 8px; }
+  .op-amount { font-size: 15px; font-weight: 700; white-space: nowrap; }
   .op-amount.neg { color: #ef4444; }
   .op-amount.pos { color: #10b981; }
+  .op-del { background: #dc2626; border: none; color: white; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+  .op-del:active { background: #b91c1c; }
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 100; align-items: flex-end; justify-content: center; }
   .modal-overlay.show { display: flex; }
   .modal { background: #1e293b; width: 100%; max-width: 600px; border-radius: 24px 24px 0 0; padding: 20px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.2s; }
@@ -192,6 +194,14 @@ async function apiPost(path, body) {
   return r.json();
 }
 
+async function apiDelete(path) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
+
 async function loadAll() {
   document.getElementById('loading').classList.remove('hidden');
   document.getElementById('app').classList.add('hidden');
@@ -252,13 +262,17 @@ function renderAll() {
 
 function renderDernieresOps() {
   const div = document.getElementById('dernieresOps');
-  const ops = ECRITURES.slice(0, 10);
+  const ops = ECRITURES.slice(0, 20);
   if (!ops.length) { div.innerHTML = '<div class="empty">Aucune opération. Ajoute ta première dépense ou ton premier revenu !</div>'; return; }
   div.innerHTML = ops.map(e => {
     const estRevenu = COMPTES.find(c => c.numero === e.compte_credit)?.type === 'produit';
     const signe = estRevenu ? '+' : '-';
     const cls = estRevenu ? 'pos' : 'neg';
-    return `<div class="op-item"><div class="op-left"><div class="op-name">${escapeHtml(e.libelle)}</div><div class="op-date">${e.date}</div></div><div class="op-amount ${cls}">${signe}${fmt(e.montant).replace(' F','')} F</div></div>`;
+    return `<div class="op-item">
+      <div class="op-left"><div class="op-name">${escapeHtml(e.libelle)}</div><div class="op-date">${e.date}</div></div>
+      <div class="op-amount ${cls}">${signe}${fmt(e.montant).replace(' F','')} F</div>
+      <button class="op-del" onclick="deleteEcriture(${e.id}, '${escapeHtml(e.libelle).replace(/'/g, "\\'")}')">🗑️</button>
+    </div>`;
   }).join('');
 }
 
@@ -361,6 +375,16 @@ async function submitOperation() {
     toast(emoji + ' ' + label + ' ajouté');
     notify(emoji + ' ' + label + ' : ' + fmt(montant), selectedCategorie.nom + detailTxt + ' — ' + date, modalType === 'depense' ? 'high' : 'default');
     closeModal();
+    loadAll();
+  } catch (e) { toast(e.message, true); }
+}
+
+async function deleteEcriture(id, libelle) {
+  if (!confirm(`Supprimer "${libelle}" ?\n\nCette action est définitive.`)) return;
+  try {
+    await apiDelete(`ecritures?id=eq.${id}`);
+    toast('🗑️ Opération supprimée');
+    notify('🗑️ Opération supprimée', libelle);
     loadAll();
   } catch (e) { toast(e.message, true); }
 }
