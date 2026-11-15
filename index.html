@@ -45,7 +45,7 @@
   .icon-del { background: #dc2626; } .icon-edit { background: #f59e0b; } .icon-pay { background: #10b981; }
   .progress-bar { height: 10px; background: #0f172a; border-radius: 5px; overflow: hidden; margin-top: 6px; }
   .progress-fill { height: 100%; }
-  .progress-ok { background: #10b981; } .progress-warn { background: #f59e0b; } .progress-danger { background: #ef4444; } .progress-reserved { background: #6366f1; }
+  .progress-ok { background: #10b981; } .progress-warn { background: #f59e0b; } .progress-danger { background: #ef4444; }
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 100; align-items: flex-end; justify-content: center; }
   .modal-overlay.show { display: flex; }
   .modal { background: #1e293b; width: 100%; max-width: 600px; border-radius: 24px 24px 0 0; padding: 20px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.2s; }
@@ -63,10 +63,10 @@
   .btn-submit { width: 100%; background: #3b82f6; color: white; border: none; padding: 18px; border-radius: 16px; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 8px; }
   .btn-submit.danger { background: #dc2626; }
   .btn-submit.success { background: #10b981; }
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; border-top: 1px solid #334155; display: flex; z-index: 50; }
-  .nav-item { flex: 1; padding: 12px 4px; text-align: center; background: none; border: none; color: #64748b; cursor: pointer; font-size: 10px; font-weight: 600; }
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; border-top: 1px solid #334155; display: flex; z-index: 50; overflow-x: auto; }
+  .nav-item { flex: 1; padding: 10px 2px; text-align: center; background: none; border: none; color: #64748b; cursor: pointer; font-size: 9px; font-weight: 600; white-space: nowrap; min-width: 60px; }
   .nav-item.active { color: #3b82f6; }
-  .nav-item .emoji { display: block; font-size: 20px; margin-bottom: 2px; }
+  .nav-item .emoji { display: block; font-size: 18px; margin-bottom: 2px; }
   .alert { padding: 14px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 14px; font-weight: 600; }
   .alert-danger { background: #7f1d1d; color: #fecaca; border: 2px solid #dc2626; }
   .alert-warn { background: #78350f; color: #fef3c7; border: 2px solid #f59e0b; }
@@ -86,7 +86,8 @@
   .revenu-bloc-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
   .revenu-bloc-name { font-weight: 600; font-size: 14px; }
   .revenu-bloc-rest { font-size: 13px; font-weight: 700; }
-  .reserve-badge { display: inline-block; background: #6366f1; color: white; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+  .badge-prio-1 { background: #dc2626; } .badge-prio-2 { background: #f59e0b; } .badge-prio-3 { background: #3b82f6; } .badge-prio-4 { background: #64748b; }
+  .badge-prio { display: inline-block; color: white; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-right: 6px; }
   .loader-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.85); display: none; align-items: center; justify-content: center; z-index: 500; backdrop-filter: blur(4px); }
   .loader-overlay.show { display: flex; }
   .loader-box { background: #1e293b; border-radius: 20px; padding: 32px 40px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
@@ -98,14 +99,32 @@
   .toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
   .toast.error { background: #dc2626; }
   .toast-undo { background: white; color: #dc2626; border: none; padding: 6px 12px; border-radius: 6px; margin-left: 12px; font-weight: 700; cursor: pointer; font-size: 13px; }
+  .login-screen { position: fixed; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+  .login-box { background: #1e293b; border-radius: 20px; padding: 32px; width: 100%; max-width: 400px; text-align: center; }
+  .login-box h1 { font-size: 28px; margin-bottom: 8px; }
+  .login-box p { color: #94a3b8; margin-bottom: 24px; font-size: 14px; }
 </style>
 </head>
 <body>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>🏦</h1>
+    <h1>Rick Finance</h1>
+    <p>Entre le mot de passe pour accéder</p>
+    <div class="form-group">
+      <input type="password" id="loginPassword" placeholder="Mot de passe" style="text-align:center;font-size:18px">
+    </div>
+    <button class="btn-submit" onclick="tryLogin()">🔓 Entrer</button>
+  </div>
+</div>
+
 <div class="container">
   <div class="header"><h1>🏦 Rick Finance</h1></div>
   <div class="toolbar">
     <button onclick="exportJSON()">📥 Export</button>
     <button onclick="document.getElementById('importFile').click()">📤 Import</button>
+    <button onclick="logout()">🔒</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
   </div>
   <div id="loading" class="loading">Chargement...</div>
@@ -141,6 +160,7 @@
     <div id="view-projets" class="hidden"><div class="card"><h2>🎯 Projets <button onclick="openModal('projet')">+ Nouveau</button></h2><div id="projetsList"></div></div></div>
     <div id="view-budgets" class="hidden"><div class="card"><h2>📋 Budgets <button onclick="openModal('budget')">+ Nouveau</button></h2><div id="budgetsList"></div></div></div>
     <div id="view-echeances" class="hidden"><div class="card"><h2>📅 Échéances <button onclick="openModal('echeance')">+ Nouvelle</button></h2><div id="echeancesList"></div></div></div>
+    <div id="view-dettes" class="hidden"><div class="card"><h2>💳 Dettes & Créances <button onclick="openModal('dette')">+ Nouvelle</button></h2><div id="dettesList"></div></div></div>
     <div id="view-historique" class="hidden">
       <div class="card"><h2>📊 Évolution (6 mois)</h2><div id="histoChart"></div></div>
       <div class="card"><h2>📦 Clôtures</h2><div id="cloturesList"></div><button class="btn-submit" style="margin-top:12px" onclick="cloturerMois(moisCourant)">🔒 Clôturer</button></div>
@@ -152,6 +172,7 @@
   <button class="nav-item" onclick="showView('projets', this)"><span class="emoji">🎯</span>Projets</button>
   <button class="nav-item" onclick="showView('budgets', this)"><span class="emoji">📋</span>Budgets</button>
   <button class="nav-item" onclick="showView('echeances', this)"><span class="emoji">📅</span>Échéances</button>
+  <button class="nav-item" onclick="showView('dettes', this)"><span class="emoji">💳</span>Dettes</button>
   <button class="nav-item" onclick="showView('historique', this)"><span class="emoji">📊</span>Historique</button>
 </div>
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
@@ -167,8 +188,33 @@
 <div class="toast" id="toast"></div>
 <script>
 const SUPABASE_URL = "https://dfkynusomkddxolhdtcd.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRma3ludXNvbWtkZHhvbGhkdGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3NTA1ODcsImV4cCI6MjExMDMyNjU4N30.ETugc5fpb5rKwWbMmiFdd0Tj7pcyaRBfYZF-enItNKc";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRma3ludXNvbWtkZHhvbGhkdGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3NTA1ODcsImV4cCI6MjExMDMxNzM1N30.ETugc5fpb5rKwWbMmiFdd0Tj7pcyaRBfYZF-enItNKc";
 const NTFY_TOPIC = "rick-finance-v2-2026";
+const PASSWORD = "RickRoss1994@";
+
+// LOGIN
+function tryLogin() {
+  const pwd = document.getElementById('loginPassword').value;
+  if (pwd === PASSWORD) {
+    sessionStorage.setItem('rf_auth', 'ok');
+    document.getElementById('loginScreen').style.display = 'none';
+    loadAll();
+  } else {
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginPassword').placeholder = '❌ Mot de passe incorrect';
+    document.getElementById('loginPassword').style.borderColor = '#dc2626';
+    setTimeout(() => { document.getElementById('loginPassword').style.borderColor = '#334155'; }, 1500);
+  }
+}
+function logout() {
+  sessionStorage.removeItem('rf_auth');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginPassword').placeholder = 'Mot de passe';
+}
+if (sessionStorage.getItem('rf_auth') === 'ok') {
+  document.getElementById('loginScreen').style.display = 'none';
+}
 
 async function notify(title, message, priority = "default") {
   try { await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, { method: 'POST', headers: { 'Title': title, 'Priority': priority, 'Tags': 'money_with_wings' }, body: message }); } catch (e) {}
@@ -186,7 +232,7 @@ const CATEGORIES_REVENU = [
 ];
 const COMPTE_BANQUE = "512";
 
-let COMPTES = [], ECRITURES = [], PROJETS = [], BUDGETS = [], HISTORIQUE = [], ECHEANCES = [];
+let COMPTES = [], ECRITURES = [], PROJETS = [], BUDGETS = [], HISTORIQUE = [], ECHEANCES = [], DETTES = [];
 let moisCourant = new Date().toISOString().slice(0, 7);
 let modalType = 'depense';
 let selectedCategorie = null;
@@ -232,10 +278,11 @@ async function loadAll() {
   try {
     COMPTES = await apiGet('comptes?select=*&order=numero');
     ECRITURES = await apiGet('ecritures?select=*&order=date.desc,id.desc');
-    PROJETS = await apiGet('projets?select=*&order=id');
+    PROJETS = await apiGet('projets?select=*&order=priorite,rang,id');
     BUDGETS = await apiGet(`budgets_mensuels?select=*&mois=eq.${moisCourant}`);
     HISTORIQUE = await apiGet('historique_mensuel?select=*&order=mois.desc&limit=12');
     ECHEANCES = await apiGet('echeances?select=*&fait=eq.false&order=date');
+    DETTES = await apiGet('dettes?select=*&order=id');
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     renderAll();
@@ -244,9 +291,10 @@ async function loadAll() {
 }
 
 async function refreshEcritures() { await withLoader('Mise à jour...', '', async () => { ECRITURES = await apiGet('ecritures?select=*&order=date.desc,id.desc'); renderRevenusDetail(); renderDernieresOps(); renderProjets(); renderBudgets(); updateKPIs(); }); }
-async function refreshProjets() { await withLoader('Mise à jour...', '', async () => { PROJETS = await apiGet('projets?select=*&order=id'); renderProjets(); updateKPIs(); }); }
+async function refreshProjets() { await withLoader('Mise à jour...', '', async () => { PROJETS = await apiGet('projets?select=*&order=priorite,rang,id'); renderProjets(); updateKPIs(); }); }
 async function refreshBudgets() { await withLoader('Mise à jour...', '', async () => { BUDGETS = await apiGet(`budgets_mensuels?select=*&mois=eq.${moisCourant}`); renderBudgets(); updateKPIs(); }); }
 async function refreshEcheances() { await withLoader('Mise à jour...', '', async () => { ECHEANCES = await apiGet('echeances?select=*&fait=eq.false&order=date'); renderEcheances(); }); }
+async function refreshDettes() { await withLoader('Mise à jour...', '', async () => { DETTES = await apiGet('dettes?select=*&order=id'); renderDettes(); updateKPIs(); }); }
 
 function soldeCompte(numero) {
   let solde = 0;
@@ -267,6 +315,7 @@ function totalMois(mois, type) {
   return Math.abs(total);
 }
 function epargneProjet(p) { return ECRITURES.filter(e => e.projet_id == p.id).reduce((s, e) => s + Number(e.montant), 0); }
+function epargneProjetMois(p, mois) { return ECRITURES.filter(e => e.projet_id == p.id && e.mois === mois).reduce((s, e) => s + Number(e.montant), 0); }
 function revenusMois(mois) { return ecrituresMois(mois).filter(e => { const cc = COMPTES.find(c => c.numero === e.compte_credit); return cc && cc.type === 'produit'; }); }
 function depensesImputees(revenuId) { return ECRITURES.filter(e => e.revenu_source_id == revenuId).reduce((s, e) => s + Number(e.montant), 0); }
 function budgetsReserves(revenuId) { return BUDGETS.filter(b => b.revenu_source_id == revenuId).reduce((s, b) => s + Number(b.montant_prevu), 0); }
@@ -288,7 +337,8 @@ function updateKPIs() {
   const epargneTotale = PROJETS.reduce((s, p) => s + epargneProjet(p), 0);
   const actif = COMPTES.filter(c => c.type === 'actif').reduce((s, c) => s + soldeCompte(c.numero), 0);
   const passif = COMPTES.filter(c => c.type === 'passif').reduce((s, c) => s + soldeCompte(c.numero), 0);
-  const patrimoine = actif - passif;
+  const dettesRestantes = DETTES.filter(d => d.type === 'dette').reduce((s, d) => s + Number(d.montant_restant), 0);
+  const patrimoine = actif - passif - dettesRestantes;
   const budgetTotal = BUDGETS.reduce((s, b) => s + Number(b.montant_prevu), 0);
   const budgetPct = budgetTotal > 0 ? Math.min(100, (dep / budgetTotal) * 100) : 0;
 
@@ -303,12 +353,20 @@ function updateKPIs() {
 
   const alertes = [];
   if (dispo < 0) alertes.push(`<div class="alert alert-danger">⚠️ Solde négatif : ${fmt(dispo)}</div>`);
+  // Alerte prévisions non respectées
+  PROJETS.forEach(p => {
+    const prev = Number(p.epargne_mensuelle_prevue) || 0;
+    if (prev > 0) {
+      const reel = epargneProjetMois(p, moisCourant);
+      if (reel < prev) alertes.push(`<div class="alert alert-warn">🎯 "${escapeHtml(p.nom)}" : il manque ${fmt(prev - reel)} ce mois (prévu ${fmt(prev)}, épargné ${fmt(reel)})</div>`);
+    }
+  });
   document.getElementById('alertZone').innerHTML = alertes.join('');
 }
 
 function renderAll() {
   document.getElementById('moisLabel').textContent = new Date(moisCourant + '-15').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-  updateKPIs(); renderRevenusDetail(); renderDernieresOps(); renderProjets(); renderBudgets(); renderEcheances(); renderHistorique();
+  updateKPIs(); renderRevenusDetail(); renderDernieresOps(); renderProjets(); renderBudgets(); renderEcheances(); renderDettes(); renderHistorique();
 }
 
 function renderRevenusDetail() {
@@ -319,17 +377,14 @@ function renderRevenusDetail() {
     const impute = depensesImputees(r.id);
     const reserve = budgetsReserves(r.id);
     const reste = Number(r.montant) - impute - reserve;
-    const pctImpute = r.montant > 0 ? Math.min(100, ((impute + reserve) / r.montant) * 100) : 0;
+    const pct = r.montant > 0 ? Math.min(100, ((impute + reserve) / r.montant) * 100) : 0;
     let cls = 'progress-ok';
-    if (pctImpute >= 100) cls = 'progress-danger';
-    else if (pctImpute >= 80) cls = 'progress-warn';
+    if (pct >= 100) cls = 'progress-danger';
+    else if (pct >= 80) cls = 'progress-warn';
     return `<div class="revenu-bloc">
-      <div class="revenu-bloc-header">
-        <div class="revenu-bloc-name">💵 ${escapeHtml(r.libelle)}</div>
-        <div class="revenu-bloc-rest ${reste >= 0 ? 'kpi-pos' : 'kpi-neg'}">${fmt(reste)} restant</div>
-      </div>
+      <div class="revenu-bloc-header"><div class="revenu-bloc-name">💵 ${escapeHtml(r.libelle)}</div><div class="revenu-bloc-rest ${reste >= 0 ? 'kpi-pos' : 'kpi-neg'}">${fmt(reste)} restant</div></div>
       <div class="projet-meta">${fmt(impute)} dépensés · ${fmt(reserve)} réservés / ${fmt(r.montant)}</div>
-      <div class="progress-bar"><div class="progress-fill ${cls}" style="width:${pctImpute}%"></div></div>
+      <div class="progress-bar"><div class="progress-fill ${cls}" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
 }
@@ -352,10 +407,23 @@ function renderProjets() {
   if (!PROJETS.length) { div.innerHTML = '<div class="empty">Aucun projet</div>'; return; }
   div.innerHTML = PROJETS.map(p => {
     const ep = epargneProjet(p);
+    const epMois = epargneProjetMois(p, moisCourant);
+    const prev = Number(p.epargne_mensuelle_prevue) || 0;
     const pct = p.objectif > 0 ? Math.min(100, (ep / p.objectif) * 100) : 0;
+    const prio = p.priorite || 1;
+    const badgeCls = 'badge-prio-' + Math.min(prio, 4);
+    let alerteMois = '';
+    if (prev > 0) {
+      if (epMois >= prev) alerteMois = `<div style="color:#10b981;font-size:11px;margin-top:2px">✅ Ce mois : ${fmt(epMois)} / ${fmt(prev)}</div>`;
+      else alerteMois = `<div style="color:#f59e0b;font-size:11px;margin-top:2px">⚠️ Ce mois : ${fmt(epMois)} / ${fmt(prev)} (manque ${fmt(prev - epMois)})</div>`;
+    }
     return `<div class="projet-item">
       <div class="projet-header">
-        <div style="flex:1"><div class="projet-name">${p.type === 'investissement' ? '🏗️' : '💎'} ${escapeHtml(p.nom)}</div><div class="projet-meta">${fmt(ep)} / ${fmt(p.objectif)} (${pct.toFixed(0)}%)</div></div>
+        <div style="flex:1">
+          <div class="projet-name"><span class="badge-prio ${badgeCls}">${prio}</span>${p.type === 'investissement' ? '🏗️' : '💎'} ${escapeHtml(p.nom)}</div>
+          <div class="projet-meta">${fmt(ep)} / ${fmt(p.objectif)} (${pct.toFixed(0)}%)${prev > 0 ? ' · prévu ' + fmt(prev) + '/mois' : ''}</div>
+          ${alerteMois}
+        </div>
         <button class="icon-btn icon-pay" onclick="openModal('epargne', ${p.id})">+</button>
         <button class="icon-btn icon-edit" onclick="openModal('edit_projet', ${p.id})">✏️</button>
         <button class="icon-btn icon-del" onclick="deleteProjet(${p.id})">🗑️</button>
@@ -370,18 +438,13 @@ function renderBudgets() {
   if (!BUDGETS.length) { div.innerHTML = '<div class="empty">Aucun budget</div>'; return; }
   div.innerHTML = BUDGETS.map(b => {
     const consomme = budgetConsomme(b.id);
-    const reserve = b.revenu_source_id ? Number(b.montant_prevu) : 0;
     const pct = b.montant_prevu > 0 ? Math.min(100, (consomme / b.montant_prevu) * 100) : 0;
     let cls = 'progress-ok'; if (pct >= 100) cls = 'progress-danger'; else if (pct >= 80) cls = 'progress-warn';
     const rev = b.revenu_source_id ? ECRITURES.find(e => e.id === b.revenu_source_id) : null;
-    const badge = b.revenu_source_id ? `<span class="reserve-badge">🔒 RÉSERVÉ</span>` : '';
-    const sousTitre = rev ? `Réservé sur : ${escapeHtml(rev.libelle)}` : '';
+    const badge = b.revenu_source_id ? `<span class="badge-prio badge-prio-3">🔒 RÉSERVÉ</span>` : '';
     return `<div class="projet-item">
       <div class="projet-header">
-        <div style="flex:1">
-          <div class="projet-name">${escapeHtml(b.categorie)} ${badge}</div>
-          <div class="projet-meta">${fmt(consomme)} / ${fmt(b.montant_prevu)} ${sousTitre ? '· ' + sousTitre : ''}</div>
-        </div>
+        <div style="flex:1"><div class="projet-name">${escapeHtml(b.categorie)} ${badge}</div><div class="projet-meta">${fmt(consomme)} / ${fmt(b.montant_prevu)}${rev ? ' · sur ' + escapeHtml(rev.libelle) : ''}</div></div>
         <button class="icon-btn icon-edit" onclick="openModal('edit_budget', ${b.id})">✏️</button>
         <button class="icon-btn icon-del" onclick="deleteBudget(${b.id})">🗑️</button>
       </div>
@@ -412,6 +475,29 @@ function renderEcheances() {
   }).join('');
 }
 
+function renderDettes() {
+  const div = document.getElementById('dettesList');
+  if (!div) return;
+  if (!DETTES.length) { div.innerHTML = '<div class="empty">Aucune dette ou créance</div>'; return; }
+  div.innerHTML = DETTES.map(d => {
+    const pct = d.montant > 0 ? Math.min(100, ((d.montant - d.montant_restant) / d.montant) * 100) : 0;
+    const emoji = d.type === 'dette' ? '💳' : '📥';
+    const couleur = d.type === 'dette' ? 'kpi-neg' : 'kpi-pos';
+    return `<div class="projet-item">
+      <div class="projet-header">
+        <div style="flex:1">
+          <div class="projet-name">${emoji} ${escapeHtml(d.nom)}</div>
+          <div class="projet-meta ${couleur}">${fmt(d.montant_restant)} restant / ${fmt(d.montant)}${d.date_echeance ? ' · échéance ' + d.date_echeance : ''}</div>
+        </div>
+        <button class="icon-btn icon-pay" onclick="openModal('rembourser', ${d.id})">✓</button>
+        <button class="icon-btn icon-edit" onclick="openModal('edit_dette', ${d.id})">✏️</button>
+        <button class="icon-btn icon-del" onclick="deleteDette(${d.id})">🗑️</button>
+      </div>
+      <div class="progress-bar"><div class="progress-fill progress-ok" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
 function renderHistorique() {
   const div = document.getElementById('histoChart');
   const derniers = [];
@@ -428,7 +514,7 @@ function renderHistorique() {
 }
 
 function showView(name, btn) {
-  ['accueil','projets','budgets','echeances','historique'].forEach(v => document.getElementById('view-' + v).classList.add('hidden'));
+  ['accueil','projets','budgets','echeances','dettes','historique'].forEach(v => document.getElementById('view-' + v).classList.add('hidden'));
   document.getElementById('view-' + name).classList.remove('hidden');
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -460,7 +546,9 @@ function openModal(type, id = null) {
     title = '🎯 Nouveau projet';
     content = `<div class="form-group"><label>Nom</label><input type="text" id="pNom" placeholder="Terrain"></div>
       <div class="form-group"><label>Type</label><select id="pType"><option value="epargne">💎 Épargne</option><option value="investissement">🏗️ Investissement</option></select></div>
-      <div class="form-group"><label>Objectif</label><input type="number" id="pObjectif" placeholder="1000000"></div>
+      <div class="form-group"><label>Objectif total</label><input type="number" id="pObjectif" placeholder="1000000"></div>
+      <div class="form-group"><label>Priorité (1 = urgent)</label><select id="pPriorite"><option value="1">🔴 1 - Urgent</option><option value="2">🟠 2 - Important</option><option value="3">🔵 3 - Normal</option><option value="4">⚪ 4 - Plus tard</option></select></div>
+      <div class="form-group"><label>Épargne mensuelle prévue</label><input type="number" id="pEpargneMois" placeholder="50000"></div>
       <button class="btn-submit" onclick="submitProjet()">Créer</button>`;
   } else if (type === 'edit_projet') {
     const p = PROJETS.find(x => x.id == id);
@@ -468,6 +556,8 @@ function openModal(type, id = null) {
     content = `<div class="form-group"><label>Nom</label><input type="text" id="pNom" value="${escapeHtml(p.nom)}"></div>
       <div class="form-group"><label>Type</label><select id="pType"><option value="epargne" ${p.type==='epargne'?'selected':''}>Épargne</option><option value="investissement" ${p.type==='investissement'?'selected':''}>Investissement</option></select></div>
       <div class="form-group"><label>Objectif</label><input type="number" id="pObjectif" value="${p.objectif}"></div>
+      <div class="form-group"><label>Priorité</label><select id="pPriorite"><option value="1" ${p.priorite==1?'selected':''}>🔴 1</option><option value="2" ${p.priorite==2?'selected':''}>🟠 2</option><option value="3" ${p.priorite==3?'selected':''}>🔵 3</option><option value="4" ${p.priorite==4?'selected':''}>⚪ 4</option></select></div>
+      <div class="form-group"><label>Épargne mensuelle prévue</label><input type="number" id="pEpargneMois" value="${p.epargne_mensuelle_prevue || 0}"></div>
       <button class="btn-submit" onclick="submitEditProjet(${id})">💾</button>`;
   } else if (type === 'epargne') {
     const p = PROJETS.find(x => x.id == id);
@@ -519,6 +609,27 @@ function openModal(type, id = null) {
       <div class="form-group"><label>Montant</label><input type="number" id="mMontant" value="${e.montant}"></div>
       <div class="form-group"><label>Date</label><input type="date" id="mDate" value="${e.date}"></div>
       <button class="btn-submit" onclick="submitEditEcriture(${id})">💾</button>`;
+  } else if (type === 'dette') {
+    title = '💳 Nouvelle dette / créance';
+    content = `<div class="form-group"><label>Type</label><select id="dType"><option value="dette">💳 Dette (je dois)</option><option value="creance">📥 Créance (on me doit)</option></select></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="dNom" placeholder="Prêt de maman"></div>
+      <div class="form-group"><label>Montant total</label><input type="number" id="dMontant" placeholder="50000"></div>
+      <div class="form-group"><label>Date d'échéance (optionnel)</label><input type="date" id="dEcheance"></div>
+      <button class="btn-submit" onclick="submitDette()">Créer</button>`;
+  } else if (type === 'edit_dette') {
+    const d = DETTES.find(x => x.id == id);
+    title = '✏️ Modifier dette';
+    content = `<div class="form-group"><label>Type</label><select id="dType"><option value="dette" ${d.type==='dette'?'selected':''}>💳 Dette</option><option value="creance" ${d.type==='creance'?'selected':''}>📥 Créance</option></select></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="dNom" value="${escapeHtml(d.nom)}"></div>
+      <div class="form-group"><label>Montant total</label><input type="number" id="dMontant" value="${d.montant}"></div>
+      <div class="form-group"><label>Date d'échéance</label><input type="date" id="dEcheance" value="${d.date_echeance || ''}"></div>
+      <button class="btn-submit" onclick="submitEditDette(${id})">💾</button>`;
+  } else if (type === 'rembourser') {
+    const d = DETTES.find(x => x.id == id);
+    title = (d.type === 'dette' ? '💳 Rembourser ' : '📥 Encaisser ') + escapeHtml(d.nom);
+    content = `<div class="form-group"><label>Montant restant</label><input type="text" value="${fmt(d.montant_restant)}" readonly></div>
+      <div class="form-group"><label>Montant à ${d.type === 'dette' ? 'rembourser' : 'encaisser'}</label><input type="number" id="rMontant" placeholder="10000"></div>
+      <button class="btn-submit success" onclick="submitRemboursement(${id})">✓ Valider</button>`;
   }
   document.getElementById('modalTitle').innerHTML = title + ' <button class="modal-close" onclick="closeModal()">✕</button>';
   modal.innerHTML = content;
@@ -537,18 +648,14 @@ async function submitDepense() {
   const revenuId = Number(selRev.value);
   const rev = ECRITURES.find(e => e.id === revenuId);
   const reste = Number(rev.montant) - depensesImputees(revenuId) - budgetsReserves(revenuId);
-  if (montant > reste) {
-    if (!(await askConfirm(`⚠️ Dépense (${fmt(montant)}) dépasse le reste de "${rev.libelle}" (${fmt(reste)}).\n\nManque ${fmt(montant - reste)}.\n\nContinuer ?`))) return;
-  }
-  await withLoader('Ajout de la dépense...', '', async () => {
+  if (montant > reste) { if (!(await askConfirm(`⚠️ Dépense (${fmt(montant)}) dépasse le reste (${fmt(reste)}).\nManque ${fmt(montant - reste)}.\n\nContinuer ?`))) return; }
+  await withLoader('Ajout...', '', async () => {
     const moisActuelReel = new Date().toISOString().slice(0, 7);
     const date = (moisCourant === moisActuelReel) ? new Date().toISOString().slice(0, 10) : moisCourant + '-15';
-    const mois = date.slice(0, 7);
-    await apiPost('ecritures', { date, libelle: detail || selectedCategorie.nom, montant, compte_debit: selectedCategorie.compte, compte_credit: COMPTE_BANQUE, mois, type_operation: 'depense', revenu_source_id: revenuId });
+    await apiPost('ecritures', { date, libelle: detail || selectedCategorie.nom, montant, compte_debit: selectedCategorie.compte, compte_credit: COMPTE_BANQUE, mois: date.slice(0, 7), type_operation: 'depense', revenu_source_id: revenuId });
     toast('💸 Dépense ajoutée');
     notify('💸 Dépense', (detail || selectedCategorie.nom) + ' — ' + fmt(montant));
-    closeModal();
-    await refreshEcritures();
+    closeModal(); await refreshEcritures();
   });
 }
 
@@ -556,20 +663,51 @@ async function submitRevenu() {
   const montant = Number(document.getElementById('mMontant').value);
   const detail = document.getElementById('mDetail').value.trim();
   if (!montant || !selectedCategorie) { toast('Champs manquants', true); return; }
-  await withLoader('Ajout du revenu...', '', async () => {
+  await withLoader('Ajout...', '', async () => {
     const moisActuelReel = new Date().toISOString().slice(0, 7);
     const date = (moisCourant === moisActuelReel) ? new Date().toISOString().slice(0, 10) : moisCourant + '-15';
-    const mois = date.slice(0, 7);
-    await apiPost('ecritures', { date, libelle: detail || selectedCategorie.nom, montant, compte_debit: COMPTE_BANQUE, compte_credit: selectedCategorie.compte, mois, type_operation: 'revenu' });
+    await apiPost('ecritures', { date, libelle: detail || selectedCategorie.nom, montant, compte_debit: COMPTE_BANQUE, compte_credit: selectedCategorie.compte, mois: date.slice(0, 7), type_operation: 'revenu' });
     toast('💵 Revenu ajouté');
-    closeModal();
-    await refreshEcritures();
+    closeModal(); await refreshEcritures();
   });
 }
 
-async function submitProjet() { const nom = document.getElementById('pNom').value.trim(); const type = document.getElementById('pType').value; const obj = Number(document.getElementById('pObjectif').value); if (!nom || !obj) { toast('Champs manquants', true); return; } await withLoader('Création...', '', async () => { await apiPost('projets', { nom, type, objectif: obj }); toast('🎯 Projet créé'); closeModal(); await refreshProjets(); }); }
-async function submitEditProjet(id) { const nom = document.getElementById('pNom').value.trim(); const type = document.getElementById('pType').value; const obj = Number(document.getElementById('pObjectif').value); if (!nom || !obj) { toast('Champs manquants', true); return; } await withLoader('Enregistrement...', '', async () => { await apiPatch(`projets?id=eq.${id}`, { nom, type, objectif: obj }); toast('✓'); closeModal(); await refreshProjets(); }); }
-async function deleteProjet(id) { const p = PROJETS.find(x => x.id === id); await withLoader('Suppression...', '', async () => { const backup = await apiGet(`projets?id=eq.${id}&select=*`); await apiDelete(`projets?id=eq.${id}`); PROJETS = PROJETS.filter(x => x.id !== id); renderProjets(); updateKPIs(); toast(`🗑️ Projet "${p.nom}"`, false, async () => { await apiPost('projets', backup[0]); await refreshProjets(); toast('✓ Restauré'); }); }); }
+async function submitProjet() {
+  const nom = document.getElementById('pNom').value.trim();
+  const type = document.getElementById('pType').value;
+  const obj = Number(document.getElementById('pObjectif').value);
+  const prio = Number(document.getElementById('pPriorite').value);
+  const epMois = Number(document.getElementById('pEpargneMois').value) || 0;
+  if (!nom || !obj) { toast('Champs manquants', true); return; }
+  await withLoader('Création...', '', async () => {
+    await apiPost('projets', { nom, type, objectif: obj, priorite: prio, epargne_mensuelle_prevue: epMois });
+    toast('🎯 Projet créé');
+    closeModal(); await refreshProjets();
+  });
+}
+
+async function submitEditProjet(id) {
+  const nom = document.getElementById('pNom').value.trim();
+  const type = document.getElementById('pType').value;
+  const obj = Number(document.getElementById('pObjectif').value);
+  const prio = Number(document.getElementById('pPriorite').value);
+  const epMois = Number(document.getElementById('pEpargneMois').value) || 0;
+  if (!nom || !obj) { toast('Champs manquants', true); return; }
+  await withLoader('Enregistrement...', '', async () => {
+    await apiPatch(`projets?id=eq.${id}`, { nom, type, objectif: obj, priorite: prio, epargne_mensuelle_prevue: epMois });
+    toast('✓'); closeModal(); await refreshProjets();
+  });
+}
+
+async function deleteProjet(id) {
+  const p = PROJETS.find(x => x.id === id);
+  await withLoader('Suppression...', '', async () => {
+    const backup = await apiGet(`projets?id=eq.${id}&select=*`);
+    await apiDelete(`projets?id=eq.${id}`);
+    PROJETS = PROJETS.filter(x => x.id !== id); renderProjets(); updateKPIs();
+    toast(`🗑️ Projet "${p.nom}"`, false, async () => { await apiPost('projets', backup[0]); await refreshProjets(); toast('✓ Restauré'); });
+  });
+}
 
 async function submitEpargne(id) {
   const m = Number(document.getElementById('eMontant').value);
@@ -585,10 +723,7 @@ async function submitEpargne(id) {
     const moisActuelReel = new Date().toISOString().slice(0, 7);
     const date = (moisCourant === moisActuelReel) ? new Date().toISOString().slice(0, 10) : moisCourant + '-15';
     await apiPost('ecritures', { date, libelle: 'Épargne ' + p.nom, montant: m, compte_debit: '580', compte_credit: '512', mois: date.slice(0, 7), type_operation: 'epargne', projet_id: id, revenu_source_id: revenuId });
-    toast('💎 Épargne ajoutée');
-    closeModal();
-    await refreshEcritures();
-    await refreshProjets();
+    toast('💎 Épargne ajoutée'); closeModal(); await refreshEcritures(); await refreshProjets();
   });
 }
 
@@ -600,18 +735,16 @@ async function submitBudget() {
   let revenuId = null;
   if (reserver) {
     const selRev = document.getElementById('bRevenuSource');
-    if (!selRev || !selRev.value) { toast('Choisis un revenu pour réserver', true); return; }
+    if (!selRev || !selRev.value) { toast('Choisis un revenu', true); return; }
     revenuId = Number(selRev.value);
     const rev = ECRITURES.find(e => e.id === revenuId);
     const reste = Number(rev.montant) - depensesImputees(revenuId) - budgetsReserves(revenuId);
     if (m > reste) { if (!(await askConfirm(`⚠️ Réservation (${fmt(m)}) dépasse le reste (${fmt(reste)}).\nManque ${fmt(m - reste)}.\n\nContinuer ?`))) return; }
   }
-  await withLoader('Création du budget...', '', async () => {
+  await withLoader('Création...', '', async () => {
     await apiPost('budgets_mensuels', { mois: moisCourant, categorie: cat, montant_prevu: m, revenu_source_id: revenuId });
-    toast(reserver ? '📋 Budget créé et réservé' : '📋 Budget créé');
-    if (reserver) notify('🔒 Budget réservé', cat + ' : ' + fmt(m));
-    closeModal();
-    await refreshBudgets();
+    toast(reserver ? '📋 Budget réservé' : '📋 Budget créé');
+    closeModal(); await refreshBudgets();
   });
 }
 
@@ -626,13 +759,70 @@ async function submitEditEcriture(id) { const libelle = document.getElementById(
 async function deleteEcriture(id) { const e = ECRITURES.find(x => x.id === id); if (e && e.cloture) { toast('🔒 Mois clôturé', true); return; } await withLoader('Suppression...', '', async () => { const backup = await apiGet(`ecritures?id=eq.${id}&select=*`); await apiDelete(`ecritures?id=eq.${id}`); ECRITURES = ECRITURES.filter(x => x.id !== id); renderRevenusDetail(); renderDernieresOps(); updateKPIs(); toast(`🗑️ "${e.libelle}"`, false, async () => { await apiPost('ecritures', backup[0]); await refreshEcritures(); toast('✓ Restauré'); }); }); }
 async function deleteCloture(id) { await withLoader('Suppression...', '', async () => { const backup = await apiGet(`historique_mensuel?id=eq.${id}&select=*`); await apiDelete(`historique_mensuel?id=eq.${id}`); HISTORIQUE = HISTORIQUE.filter(x => x.id !== id); renderHistorique(); toast('🗑️', false, async () => { await apiPost('historique_mensuel', backup[0]); HISTORIQUE = await apiGet('historique_mensuel?select=*&order=mois.desc&limit=12'); renderHistorique(); toast('✓ Restauré'); }); }); }
 
+async function submitDette() {
+  const type = document.getElementById('dType').value;
+  const nom = document.getElementById('dNom').value.trim();
+  const montant = Number(document.getElementById('dMontant').value);
+  const dateEch = document.getElementById('dEcheance').value || null;
+  if (!nom || !montant) { toast('Champs manquants', true); return; }
+  await withLoader('Création...', '', async () => {
+    await apiPost('dettes', { type, nom, montant, montant_restant: montant, date_echeance: dateEch });
+    toast(type === 'dette' ? '💳 Dette enregistrée' : '📥 Créance enregistrée');
+    closeModal(); await refreshDettes();
+  });
+}
+
+async function submitEditDette(id) {
+  const type = document.getElementById('dType').value;
+  const nom = document.getElementById('dNom').value.trim();
+  const montant = Number(document.getElementById('dMontant').value);
+  const dateEch = document.getElementById('dEcheance').value || null;
+  if (!nom || !montant) { toast('Champs manquants', true); return; }
+  const d = DETTES.find(x => x.id == id);
+  const dejaPaye = Number(d.montant) - Number(d.montant_restant);
+  await withLoader('Enregistrement...', '', async () => {
+    await apiPatch(`dettes?id=eq.${id}`, { type, nom, montant, montant_restant: Math.max(0, montant - dejaPaye), date_echeance: dateEch });
+    toast('✓'); closeModal(); await refreshDettes();
+  });
+}
+
+async function submitRemboursement(id) {
+  const m = Number(document.getElementById('rMontant').value);
+  if (!m || m <= 0) { toast('Montant invalide', true); return; }
+  const d = DETTES.find(x => x.id == id);
+  if (m > Number(d.montant_restant)) { toast('Dépasse le restant', true); return; }
+  await withLoader('Validation...', '', async () => {
+    const newRestant = Number(d.montant_restant) - m;
+    await apiPatch(`dettes?id=eq.${id}`, { montant_restant: newRestant });
+    // Créer l'écriture correspondante
+    const date = new Date().toISOString().slice(0, 10);
+    const mois = date.slice(0, 7);
+    if (d.type === 'dette') {
+      // Remboursement : sortie d'argent
+      await apiPost('ecritures', { date, libelle: 'Remboursement ' + d.nom, montant: m, compte_debit: '401', compte_credit: '512', mois, type_operation: 'depense' });
+    } else {
+      // Encaissement : entrée d'argent
+      await apiPost('ecritures', { date, libelle: 'Encaissement ' + d.nom, montant: m, compte_debit: '512', compte_credit: '411', mois, type_operation: 'revenu' });
+    }
+    toast('✓ Validé'); closeModal(); await refreshDettes(); await refreshEcritures();
+  });
+}
+
+async function deleteDette(id) {
+  const d = DETTES.find(x => x.id === id);
+  await withLoader('Suppression...', '', async () => {
+    const backup = await apiGet(`dettes?id=eq.${id}&select=*`);
+    await apiDelete(`dettes?id=eq.${id}`);
+    DETTES = DETTES.filter(x => x.id !== id); renderDettes(); updateKPIs();
+    toast(`🗑️ "${d.nom}"`, false, async () => { await apiPost('dettes', backup[0]); await refreshDettes(); toast('✓ Restauré'); });
+  });
+}
+
 async function marquerPaye(id, libelle, m) {
   await withLoader('Paiement...', '', async () => {
     if (m > 0) { const date = new Date().toISOString().slice(0, 10); const mois = date.slice(0, 7); await apiPost('ecritures', { date, libelle, montant: m, compte_debit: '601', compte_credit: '512', mois, type_operation: 'depense' }); }
     await apiPatch(`echeances?id=eq.${id}`, { fait: true });
-    toast('✓ Payé');
-    await refreshEcheances();
-    await refreshEcritures();
+    toast('✓ Payé'); await refreshEcheances(); await refreshEcritures();
   });
 }
 
@@ -649,7 +839,13 @@ async function cloturerMois(mois) {
   });
 }
 
-function exportJSON() { const data = { version: 1, exported_at: new Date().toISOString(), comptes: COMPTES, ecritures: ECRITURES, projets: PROJETS, budgets_mensuels: BUDGETS, historique_mensuel: HISTORIQUE, echeances: ECHEANCES }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `rick-finance-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click(); URL.revokeObjectURL(url); toast('📥 Téléchargé'); }
+function exportJSON() {
+  const data = { version: 1, exported_at: new Date().toISOString(), comptes: COMPTES, ecritures: ECRITURES, projets: PROJETS, budgets_mensuels: BUDGETS, historique_mensuel: HISTORIQUE, echeances: ECHEANCES, dettes: DETTES };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `rick-finance-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click();
+  URL.revokeObjectURL(url); toast('📥 Téléchargé');
+}
 
 async function importJSON(event) {
   const file = event.target.files[0]; if (!file) return;
@@ -663,7 +859,7 @@ async function importJSON(event) {
   event.target.value = '';
 }
 
-loadAll();
+if (sessionStorage.getItem('rf_auth') === 'ok') { loadAll(); }
 </script>
 </body>
 </html>
