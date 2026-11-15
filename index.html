@@ -38,15 +38,15 @@
   .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 16px; margin-bottom: 16px; }
   .card h2 { font-size: 15px; margin-bottom: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
   .card h2 button { background: #3b82f6; border: none; color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-  .op-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; gap: 8px; }
+  .op-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; gap: 6px; }
   .op-item:last-child { border-bottom: none; }
   .op-left { flex: 1; min-width: 0; }
   .op-name { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .op-date { font-size: 12px; color: #94a3b8; margin-top: 2px; }
   .op-amount { font-size: 15px; font-weight: 700; white-space: nowrap; }
   .op-amount.neg { color: #ef4444; } .op-amount.pos { color: #10b981; }
-  .op-del { background: #dc2626; border: none; color: white; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 14px; flex-shrink: 0; }
-  .op-pay { background: #10b981; border: none; color: white; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+  .icon-btn { border: none; color: white; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+  .icon-del { background: #dc2626; } .icon-edit { background: #f59e0b; } .icon-pay { background: #10b981; }
   .progress-bar { height: 10px; background: #0f172a; border-radius: 5px; overflow: hidden; margin-top: 6px; }
   .progress-fill { height: 100%; transition: width 0.3s; }
   .progress-ok { background: #10b981; } .progress-warn { background: #f59e0b; } .progress-danger { background: #ef4444; }
@@ -68,6 +68,8 @@
   .btn-submit:active { background: #2563eb; }
   .btn-submit.danger { background: #dc2626; }
   .btn-submit.success { background: #10b981; }
+  .btn-row { display: flex; gap: 8px; margin-top: 8px; }
+  .btn-row .btn-submit { margin: 0; flex: 1; }
   .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; border-top: 1px solid #334155; display: flex; z-index: 50; }
   .nav-item { flex: 1; padding: 12px 4px; text-align: center; background: none; border: none; color: #64748b; cursor: pointer; font-size: 10px; font-weight: 600; }
   .nav-item.active { color: #3b82f6; }
@@ -89,7 +91,7 @@
   .histo-col .bar-label { font-size: 9px; color: #94a3b8; text-align: center; margin-top: 4px; }
   .projet-item { padding: 12px 0; border-bottom: 1px solid #334155; }
   .projet-item:last-child { border-bottom: none; }
-  .projet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+  .projet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 6px; }
   .projet-name { font-size: 15px; font-weight: 600; }
   .projet-meta { font-size: 12px; color: #94a3b8; }
 </style>
@@ -120,9 +122,9 @@
         </div>
       </div>
       <div class="kpi-grid">
-        <div class="kpi"><div class="kpi-label">Bénéfice</div><div class="kpi-value kpi-pos" id="kpiBenefice">0 F</div><div class="kpi-sub" id="kpiBeneficeSub"></div></div>
-        <div class="kpi"><div class="kpi-label">Épargne totale</div><div class="kpi-value kpi-blue" id="kpiEpargne">0 F</div><div class="kpi-sub">Projets cumulés</div></div>
-        <div class="kpi"><div class="kpi-label">Patrimoine</div><div class="kpi-value kpi-orange" id="kpiPatrimoine">0 F</div><div class="kpi-sub">Possédé - dettes</div></div>
+        <div class="kpi"><div class="kpi-label">Bénéfice</div><div class="kpi-value kpi-pos" id="kpiBenefice">0 F</div></div>
+        <div class="kpi"><div class="kpi-label">Épargne totale</div><div class="kpi-value kpi-blue" id="kpiEpargne">0 F</div></div>
+        <div class="kpi"><div class="kpi-label">Patrimoine</div><div class="kpi-value kpi-orange" id="kpiPatrimoine">0 F</div></div>
         <div class="kpi"><div class="kpi-label">Budget utilisé</div><div class="kpi-value" id="kpiBudget">0 %</div><div class="kpi-sub" id="kpiBudgetSub"></div></div>
       </div>
       <div class="actions">
@@ -136,40 +138,25 @@
     </div>
     <div id="view-projets" class="hidden">
       <div class="card">
-        <h2>🎯 Projets & Investissements <button onclick="openModal('projet')">+ Nouveau</button></h2>
+        <h2>🎯 Projets <button onclick="openModal('projet')">+ Nouveau</button></h2>
         <div id="projetsList"></div>
       </div>
     </div>
     <div id="view-budgets" class="hidden">
       <div class="card">
-        <h2>📋 Budgets du mois</h2>
+        <h2>📋 Budgets du mois <button onclick="openModal('budget')">+ Nouveau</button></h2>
         <div id="budgetsList"></div>
-        <div class="form-group" style="margin-top:12px">
-          <label>Définir un budget</label>
-          <div style="display:flex; gap:8px;">
-            <input type="text" id="bCat" placeholder="Nourriture" style="flex:1">
-            <input type="number" id="bMontant" placeholder="30000" style="width:120px">
-            <button class="btn-submit" style="width:auto; padding:14px 20px; margin:0" onclick="setBudget()">OK</button>
-          </div>
-        </div>
       </div>
     </div>
     <div id="view-echeances" class="hidden">
       <div class="card">
-        <h2>📅 Échéances à venir</h2>
+        <h2>📅 Échéances <button onclick="openModal('echeance')">+ Nouvelle</button></h2>
         <div id="echeancesList"></div>
-        <button class="btn-submit" onclick="openModal('echeance')" style="margin-top:12px">+ Nouvelle échéance</button>
       </div>
     </div>
     <div id="view-historique" class="hidden">
-      <div class="card">
-        <h2>📊 Évolution (6 derniers mois)</h2>
-        <div id="histoChart"></div>
-      </div>
-      <div class="card">
-        <h2>📦 Clôtures mensuelles</h2>
-        <div id="cloturesList"></div>
-      </div>
+      <div class="card"><h2>📊 Évolution (6 mois)</h2><div id="histoChart"></div></div>
+      <div class="card"><h2>📦 Clôtures</h2><div id="cloturesList"></div><button class="btn-submit" style="margin-top:12px" onclick="cloturerMois(moisCourant)">🔒 Clôturer ${moisCourant}</button></div>
     </div>
   </div>
 </div>
@@ -223,6 +210,7 @@ let COMPTES = [], ECRITURES = [], PROJETS = [], BUDGETS = [], HISTORIQUE = [], E
 let moisCourant = new Date().toISOString().slice(0, 7);
 let modalType = 'depense';
 let selectedCategorie = null;
+let editId = null;
 
 function fmt(n) { return Number(n || 0).toLocaleString('fr-FR').replace(/\u202f/g, ' ') + ' F'; }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -239,7 +227,6 @@ async function apiGet(path) {
   if (!r.ok) throw new Error(await r.text());
   return r.json();
 }
-
 async function apiPost(path, body) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     method: 'POST',
@@ -249,7 +236,14 @@ async function apiPost(path, body) {
   if (!r.ok) throw new Error(await r.text());
   return r.json();
 }
-
+async function apiPatch(path, body) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: 'PATCH',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
 async function apiDelete(path) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     method: 'DELETE',
@@ -286,9 +280,7 @@ function soldeCompte(numero) {
   if (c && (c.type === 'passif' || c.type === 'produit')) solde = -solde;
   return solde;
 }
-
 function ecrituresMois(mois) { return ECRITURES.filter(e => e.mois === mois); }
-
 function totalMois(mois, type) {
   let total = 0;
   ecrituresMois(mois).forEach(e => {
@@ -299,7 +291,6 @@ function totalMois(mois, type) {
   });
   return Math.abs(total);
 }
-
 function epargneProjet(p) {
   return ECRITURES.filter(e => e.projet_id == p.id).reduce((s, e) => s + Number(e.montant), 0);
 }
@@ -348,28 +339,33 @@ function renderDernieresOps() {
     const estRevenu = COMPTES.find(c => c.numero === e.compte_credit)?.type === 'produit';
     const signe = estRevenu ? '+' : '-';
     const cls = estRevenu ? 'pos' : 'neg';
-    const btn = e.cloture ? '<span style="color:#64748b;font-size:12px">🔒</span>' : `<button class="op-del" onclick="deleteEcriture(${e.id}, '${escapeHtml(e.libelle).replace(/'/g, "\\'")}')">🗑️</button>`;
+    const actions = e.cloture
+      ? '<span style="color:#64748b;font-size:12px">🔒</span>'
+      : `<button class="icon-btn icon-edit" onclick="openModal('edit_ecriture', ${e.id})">✏️</button>
+         <button class="icon-btn icon-del" onclick="deleteEcriture(${e.id})">🗑️</button>`;
     return `<div class="op-item">
       <div class="op-left"><div class="op-name">${escapeHtml(e.libelle)}</div><div class="op-date">${e.date}</div></div>
       <div class="op-amount ${cls}">${signe}${fmt(e.montant).replace(' F','')} F</div>
-      ${btn}
+      ${actions}
     </div>`;
   }).join('');
 }
 
 function renderProjets() {
   const div = document.getElementById('projetsList');
-  if (!PROJETS.length) { div.innerHTML = '<div class="empty">Aucun projet. Crée ton premier projet !</div>'; return; }
+  if (!PROJETS.length) { div.innerHTML = '<div class="empty">Aucun projet</div>'; return; }
   div.innerHTML = PROJETS.map(p => {
     const ep = epargneProjet(p);
     const pct = p.objectif > 0 ? Math.min(100, (ep / p.objectif) * 100) : 0;
     return `<div class="projet-item">
       <div class="projet-header">
-        <div>
+        <div style="flex:1;min-width:0">
           <div class="projet-name">${p.type === 'investissement' ? '🏗️' : '💎'} ${escapeHtml(p.nom)}</div>
           <div class="projet-meta">${fmt(ep)} / ${fmt(p.objectif)} (${pct.toFixed(0)}%)</div>
         </div>
-        <button class="btn-submit success" style="width:auto; padding:8px 12px; margin:0; font-size:13px" onclick="openModal('epargne', ${p.id})">+ Épargner</button>
+        <button class="icon-btn icon-pay" onclick="openModal('epargne', ${p.id})">+</button>
+        <button class="icon-btn icon-edit" onclick="openModal('edit_projet', ${p.id})">✏️</button>
+        <button class="icon-btn icon-del" onclick="deleteProjet(${p.id})">🗑️</button>
       </div>
       <div class="progress-bar"><div class="progress-fill progress-ok" style="width:${pct}%"></div></div>
     </div>`;
@@ -378,7 +374,7 @@ function renderProjets() {
 
 function renderBudgets() {
   const div = document.getElementById('budgetsList');
-  if (!BUDGETS.length) { div.innerHTML = '<div class="empty">Aucun budget défini ce mois</div>'; return; }
+  if (!BUDGETS.length) { div.innerHTML = '<div class="empty">Aucun budget ce mois</div>'; return; }
   div.innerHTML = BUDGETS.map(b => {
     let dep = 0;
     ecrituresMois(moisCourant).forEach(e => {
@@ -390,7 +386,14 @@ function renderBudgets() {
     if (pct >= 100) cls = 'progress-danger';
     else if (pct >= 80) cls = 'progress-warn';
     return `<div class="projet-item">
-      <div class="projet-header"><div class="projet-name">${escapeHtml(b.categorie)}</div><div class="projet-meta">${fmt(dep)} / ${fmt(b.montant_prevu)}</div></div>
+      <div class="projet-header">
+        <div style="flex:1;min-width:0">
+          <div class="projet-name">${escapeHtml(b.categorie)}</div>
+          <div class="projet-meta">${fmt(dep)} / ${fmt(b.montant_prevu)}</div>
+        </div>
+        <button class="icon-btn icon-edit" onclick="openModal('edit_budget', ${b.id})">✏️</button>
+        <button class="icon-btn icon-del" onclick="deleteBudget(${b.id})">🗑️</button>
+      </div>
       <div class="progress-bar"><div class="progress-fill ${cls}" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
@@ -411,7 +414,9 @@ function renderEcheances() {
     return `<div class="op-item">
       <div class="op-left"><div class="op-name">${escapeHtml(e.libelle)}</div><div class="op-date" style="${style}">${e.date} · ${badge}</div></div>
       <div class="op-amount">${fmt(e.montant)}</div>
-      <button class="op-pay" onclick="marquerPaye(${e.id}, '${escapeHtml(e.libelle).replace(/'/g, "\\'")}', ${e.montant})">✓</button>
+      <button class="icon-btn icon-pay" onclick="marquerPaye(${e.id}, '${escapeHtml(e.libelle).replace(/'/g, "\\'")}', ${e.montant})">✓</button>
+      <button class="icon-btn icon-edit" onclick="openModal('edit_echeance', ${e.id})">✏️</button>
+      <button class="icon-btn icon-del" onclick="deleteEcheance(${e.id})">🗑️</button>
     </div>`;
   }).join('');
 }
@@ -435,10 +440,11 @@ function renderHistorique() {
   }).join('') + '</div>';
 
   const clotures = document.getElementById('cloturesList');
-  if (!HISTORIQUE.length) { clotures.innerHTML = '<div class="empty">Aucune clôture enregistrée</div>'; return; }
+  if (!HISTORIQUE.length) { clotures.innerHTML = '<div class="empty">Aucune clôture</div>'; return; }
   clotures.innerHTML = HISTORIQUE.map(h => `
     <div class="op-item">
       <div class="op-left"><div class="op-name">${h.mois}</div><div class="op-date">Bénéfice : ${fmt(h.resultat)}</div></div>
+      <button class="icon-btn icon-del" onclick="deleteCloture(${h.id})">🗑️</button>
     </div>
   `).join('');
 }
@@ -448,8 +454,6 @@ function showView(name, btn) {
   document.getElementById('view-' + name).classList.remove('hidden');
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if (name === 'historique') renderHistorique();
-  if (name === 'echeances') renderEcheances();
 }
 
 function changeMois(delta) {
@@ -459,8 +463,9 @@ function changeMois(delta) {
   loadAll();
 }
 
-function openModal(type, projetId = null) {
+function openModal(type, id = null) {
   modalType = type;
+  editId = id;
   selectedCategorie = null;
   const modal = document.getElementById('modalContent');
   let title = '', content = '';
@@ -470,8 +475,8 @@ function openModal(type, projetId = null) {
     const cats = type === 'depense' ? CATEGORIES_DEPENSE : CATEGORIES_REVENU;
     content = `
       <div class="form-group"><label>Combien ?</label><input type="number" id="mMontant" placeholder="0" inputmode="numeric"></div>
-      <div class="form-group"><label>C'était pour quoi ?</label><div class="chips" id="mChips">${cats.map(c => `<div class="chip" onclick="selectChip(this, '${c.nom}', '${c.compte}')">${c.emoji} ${c.nom}</div>`).join('')}</div></div>
-      <div class="form-group"><label>Détail (optionnel)</label><input type="text" id="mDetail" placeholder="Ex: déjeuner"></div>
+      <div class="form-group"><label>Catégorie</label><div class="chips" id="mChips">${cats.map(c => `<div class="chip" onclick="selectChip(this, '${c.nom}', '${c.compte}')">${c.emoji} ${c.nom}</div>`).join('')}</div></div>
+      <div class="form-group"><label>Détail</label><input type="text" id="mDetail" placeholder="Optionnel"></div>
       <button class="btn-submit ${type === 'depense' ? 'danger' : 'success'}" onclick="submitOperation()">${type === 'depense' ? '💸 Ajouter' : '💵 Ajouter'}</button>
     `;
   } else if (type === 'projet') {
@@ -479,24 +484,67 @@ function openModal(type, projetId = null) {
     content = `
       <div class="form-group"><label>Nom</label><input type="text" id="pNom" placeholder="Ex: Terrain"></div>
       <div class="form-group"><label>Type</label><select id="pType"><option value="epargne">💎 Épargne</option><option value="investissement">🏗️ Investissement</option></select></div>
-      <div class="form-group"><label>Objectif (FCFA)</label><input type="number" id="pObjectif" placeholder="1000000"></div>
+      <div class="form-group"><label>Objectif</label><input type="number" id="pObjectif" placeholder="1000000"></div>
       <button class="btn-submit" onclick="submitProjet()">🎯 Créer</button>
     `;
-  } else if (type === 'epargne') {
-    title = '💎 Épargner sur un projet';
-    const p = PROJETS.find(x => x.id == projetId);
+  } else if (type === 'edit_projet') {
+    const p = PROJETS.find(x => x.id == id);
+    title = '✏️ Modifier projet';
     content = `
-      <div class="form-group"><label>Projet</label><input type="text" value="${escapeHtml(p.nom)}" readonly style="opacity:0.6"></div>
-      <div class="form-group"><label>Montant à épargner</label><input type="number" id="eMontant" placeholder="10000" inputmode="numeric"></div>
-      <button class="btn-submit success" onclick="submitEpargne(${projetId})">💎 Épargner</button>
+      <div class="form-group"><label>Nom</label><input type="text" id="pNom" value="${escapeHtml(p.nom)}"></div>
+      <div class="form-group"><label>Type</label><select id="pType"><option value="epargne" ${p.type==='epargne'?'selected':''}>💎 Épargne</option><option value="investissement" ${p.type==='investissement'?'selected':''}>🏗️ Investissement</option></select></div>
+      <div class="form-group"><label>Objectif</label><input type="number" id="pObjectif" value="${p.objectif}"></div>
+      <button class="btn-submit" onclick="submitEditProjet(${id})">💾 Enregistrer</button>
+    `;
+  } else if (type === 'epargne') {
+    const p = PROJETS.find(x => x.id == id);
+    title = '💎 Épargner';
+    content = `
+      <div class="form-group"><label>Projet</label><input type="text" value="${escapeHtml(p.nom)}" readonly></div>
+      <div class="form-group"><label>Montant</label><input type="number" id="eMontant" placeholder="10000"></div>
+      <button class="btn-submit success" onclick="submitEpargne(${id})">💎 Épargner</button>
+    `;
+  } else if (type === 'budget') {
+    title = '📋 Nouveau budget';
+    content = `
+      <div class="form-group"><label>Catégorie</label><input type="text" id="bCat" placeholder="Nourriture"></div>
+      <div class="form-group"><label>Montant prévu</label><input type="number" id="bMontant" placeholder="30000"></div>
+      <button class="btn-submit" onclick="submitBudget()">📋 Créer</button>
+    `;
+  } else if (type === 'edit_budget') {
+    const b = BUDGETS.find(x => x.id == id);
+    title = '✏️ Modifier budget';
+    content = `
+      <div class="form-group"><label>Catégorie</label><input type="text" id="bCat" value="${escapeHtml(b.categorie)}"></div>
+      <div class="form-group"><label>Montant prévu</label><input type="number" id="bMontant" value="${b.montant_prevu}"></div>
+      <button class="btn-submit" onclick="submitEditBudget(${id})">💾 Enregistrer</button>
     `;
   } else if (type === 'echeance') {
     title = '📅 Nouvelle échéance';
     content = `
-      <div class="form-group"><label>Nom</label><input type="text" id="ecLibelle" placeholder="Ex: Loyer décembre"></div>
+      <div class="form-group"><label>Nom</label><input type="text" id="ecLibelle" placeholder="Loyer"></div>
       <div class="form-group"><label>Date</label><input type="date" id="ecDate"></div>
-      <div class="form-group"><label>Montant (optionnel)</label><input type="number" id="ecMontant" placeholder="0"></div>
+      <div class="form-group"><label>Montant</label><input type="number" id="ecMontant" placeholder="0"></div>
       <button class="btn-submit" onclick="submitEcheance()">📅 Ajouter</button>
+    `;
+  } else if (type === 'edit_echeance') {
+    const e = ECHEANCES.find(x => x.id == id);
+    title = '✏️ Modifier échéance';
+    content = `
+      <div class="form-group"><label>Nom</label><input type="text" id="ecLibelle" value="${escapeHtml(e.libelle)}"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="ecDate" value="${e.date}"></div>
+      <div class="form-group"><label>Montant</label><input type="number" id="ecMontant" value="${e.montant}"></div>
+      <button class="btn-submit" onclick="submitEditEcheance(${id})">💾 Enregistrer</button>
+    `;
+  } else if (type === 'edit_ecriture') {
+    const e = ECRITURES.find(x => x.id == id);
+    const isRev = COMPTES.find(c => c.numero === e.compte_credit)?.type === 'produit';
+    title = '✏️ Modifier opération';
+    content = `
+      <div class="form-group"><label>Libellé</label><input type="text" id="mDetail" value="${escapeHtml(e.libelle)}"></div>
+      <div class="form-group"><label>Montant</label><input type="number" id="mMontant" value="${e.montant}"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="mDate" value="${e.date}"></div>
+      <button class="btn-submit" onclick="submitEditEcriture(${id}, ${isRev})">💾 Enregistrer</button>
     `;
   }
 
@@ -511,20 +559,16 @@ function selectChip(el, nom, compte) { document.querySelectorAll('.chip').forEac
 async function submitOperation() {
   const montant = Number(document.getElementById('mMontant').value);
   const detail = document.getElementById('mDetail').value.trim();
-  if (!montant || montant <= 0) { toast('Entre un montant valide', true); return; }
-  if (!selectedCategorie) { toast('Choisis une catégorie', true); return; }
+  if (!montant || !selectedCategorie) { toast('Champs manquants', true); return; }
   const date = new Date().toISOString().slice(0, 10);
   const mois = date.slice(0, 7);
   const libelle = detail || selectedCategorie.nom;
-  let cd, cc;
-  if (modalType === 'depense') { cd = selectedCategorie.compte; cc = COMPTE_BANQUE; }
-  else { cd = COMPTE_BANQUE; cc = selectedCategorie.compte; }
+  const cd = modalType === 'depense' ? selectedCategorie.compte : COMPTE_BANQUE;
+  const cc = modalType === 'depense' ? COMPTE_BANQUE : selectedCategorie.compte;
   try {
     await apiPost('ecritures', { date, libelle, montant, compte_debit: cd, compte_credit: cc, mois, type_operation: modalType });
-    toast((modalType === 'depense' ? '💸 Dépense ajoutée' : '💵 Revenu ajouté'));
-    notify((modalType === 'depense' ? '💸 Dépense' : '💵 Revenu') + ' : ' + fmt(montant), selectedCategorie.nom + ' — ' + date);
-    closeModal();
-    loadAll();
+    toast('✓ Ajouté'); notify('💰 ' + libelle, fmt(montant));
+    closeModal(); loadAll();
   } catch (e) { toast(e.message, true); }
 }
 
@@ -532,96 +576,116 @@ async function submitProjet() {
   const nom = document.getElementById('pNom').value.trim();
   const type = document.getElementById('pType').value;
   const objectif = Number(document.getElementById('pObjectif').value);
-  if (!nom || !objectif) { toast('Champs invalides', true); return; }
-  try {
-    await apiPost('projets', { nom, type, objectif });
-    toast('🎯 Projet créé');
-    notify('🎯 Projet créé', nom + ' — objectif ' + fmt(objectif));
-    closeModal();
-    loadAll();
-  } catch (e) { toast(e.message, true); }
+  if (!nom || !objectif) { toast('Champs manquants', true); return; }
+  try { await apiPost('projets', { nom, type, objectif }); toast('✓'); closeModal(); loadAll(); }
+  catch (e) { toast(e.message, true); }
+}
+async function submitEditProjet(id) {
+  const nom = document.getElementById('pNom').value.trim();
+  const type = document.getElementById('pType').value;
+  const objectif = Number(document.getElementById('pObjectif').value);
+  if (!nom || !objectif) { toast('Champs manquants', true); return; }
+  try { await apiPatch(`projets?id=eq.${id}`, { nom, type, objectif }); toast('✓ Modifié'); closeModal(); loadAll(); }
+  catch (e) { toast(e.message, true); }
+}
+async function deleteProjet(id) {
+  if (!confirm('Supprimer ce projet ?')) return;
+  try { await apiDelete(`projets?id=eq.${id}`); toast('🗑️ Supprimé'); loadAll(); }
+  catch (e) { toast(e.message, true); }
 }
 
-async function submitEpargne(projetId) {
+async function submitEpargne(id) {
   const montant = Number(document.getElementById('eMontant').value);
-  if (!montant || montant <= 0) { toast('Montant invalide', true); return; }
-  const p = PROJETS.find(x => x.id == projetId);
+  if (!montant) { toast('Montant manquant', true); return; }
+  const p = PROJETS.find(x => x.id == id);
   const date = new Date().toISOString().slice(0, 10);
   const mois = date.slice(0, 7);
   try {
-    await apiPost('ecritures', { date, libelle: 'Épargne ' + p.nom, montant, compte_debit: '580', compte_credit: '512', mois, type_operation: 'epargne', projet_id: projetId });
-    toast('💎 Épargne ajoutée');
-    notify('💎 Épargne', p.nom + ' : +' + fmt(montant));
-    closeModal();
-    loadAll();
+    await apiPost('ecritures', { date, libelle: 'Épargne ' + p.nom, montant, compte_debit: '580', compte_credit: '512', mois, type_operation: 'epargne', projet_id: id });
+    toast('✓ Épargné'); notify('💎 Épargne', p.nom + ' +' + fmt(montant));
+    closeModal(); loadAll();
   } catch (e) { toast(e.message, true); }
+}
+
+async function submitBudget() {
+  const cat = document.getElementById('bCat').value.trim();
+  const m = Number(document.getElementById('bMontant').value);
+  if (!cat || !m) { toast('Champs manquants', true); return; }
+  try {
+    await apiPost('budgets_mensuels', { mois: moisCourant, categorie: cat, montant_prevu: m });
+    toast('✓'); closeModal(); loadAll();
+  } catch (e) { toast(e.message, true); }
+}
+async function submitEditBudget(id) {
+  const cat = document.getElementById('bCat').value.trim();
+  const m = Number(document.getElementById('bMontant').value);
+  if (!cat || !m) { toast('Champs manquants', true); return; }
+  try { await apiPatch(`budgets_mensuels?id=eq.${id}`, { categorie: cat, montant_prevu: m }); toast('✓ Modifié'); closeModal(); loadAll(); }
+  catch (e) { toast(e.message, true); }
+}
+async function deleteBudget(id) {
+  if (!confirm('Supprimer ce budget ?')) return;
+  try { await apiDelete(`budgets_mensuels?id=eq.${id}`); toast('🗑️ Supprimé'); loadAll(); }
+  catch (e) { toast(e.message, true); }
 }
 
 async function submitEcheance() {
   const libelle = document.getElementById('ecLibelle').value.trim();
   const date = document.getElementById('ecDate').value;
   const montant = Number(document.getElementById('ecMontant').value) || 0;
-  if (!libelle || !date) { toast('Champs invalides', true); return; }
-  try {
-    await apiPost('echeances', { libelle, date, montant });
-    toast('📅 Échéance ajoutée');
-    notify('📅 Nouvelle échéance', `${libelle} — ${date}`);
-    closeModal();
-    loadAll();
-  } catch (e) { toast(e.message, true); }
+  if (!libelle || !date) { toast('Champs manquants', true); return; }
+  try { await apiPost('echeances', { libelle, date, montant }); toast('✓'); closeModal(); loadAll(); }
+  catch (e) { toast(e.message, true); }
+}
+async function submitEditEcheance(id) {
+  const libelle = document.getElementById('ecLibelle').value.trim();
+  const date = document.getElementById('ecDate').value;
+  const montant = Number(document.getElementById('ecMontant').value) || 0;
+  if (!libelle || !date) { toast('Champs manquants', true); return; }
+  try { await apiPatch(`echeances?id=eq.${id}`, { libelle, date, montant }); toast('✓ Modifié'); closeModal(); loadAll(); }
+  catch (e) { toast(e.message, true); }
+}
+async function deleteEcheance(id) {
+  if (!confirm('Supprimer cette échéance ?')) return;
+  try { await apiDelete(`echeances?id=eq.${id}`); toast('🗑️ Supprimé'); loadAll(); }
+  catch (e) { toast(e.message, true); }
+}
+
+async function submitEditEcriture(id, isRev) {
+  const libelle = document.getElementById('mDetail').value.trim();
+  const montant = Number(document.getElementById('mMontant').value);
+  const date = document.getElementById('mDate').value;
+  if (!libelle || !montant || !date) { toast('Champs manquants', true); return; }
+  const mois = date.slice(0, 7);
+  try { await apiPatch(`ecritures?id=eq.${id}`, { libelle, montant, date, mois }); toast('✓ Modifié'); closeModal(); loadAll(); }
+  catch (e) { toast(e.message, true); }
+}
+async function deleteEcriture(id) {
+  const e = ECRITURES.find(x => x.id === id);
+  if (e && e.cloture) { toast('🔒 Mois clôturé', true); return; }
+  if (!confirm('Supprimer cette opération ?')) return;
+  try { await apiDelete(`ecritures?id=eq.${id}`); toast('🗑️ Supprimé'); loadAll(); }
+  catch (e) { toast(e.message, true); }
 }
 
 async function marquerPaye(id, libelle, montant) {
-  if (!confirm(`Marquer "${libelle}" comme payé ?\nMontant : ${fmt(montant)}`)) return;
+  if (!confirm(`Marquer "${libelle}" payé ?`)) return;
   try {
     if (montant > 0) {
       const date = new Date().toISOString().slice(0, 10);
       const mois = date.slice(0, 7);
       await apiPost('ecritures', { date, libelle, montant, compte_debit: '601', compte_credit: '512', mois, type_operation: 'depense' });
     }
-    await fetch(`${SUPABASE_URL}/rest/v1/echeances?id=eq.${id}`, {
-      method: 'PATCH',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fait: true })
-    });
-    toast('✓ Échéance payée');
-    loadAll();
-  } catch (e) { toast(e.message, true); }
-}
-
-async function setBudget() {
-  const cat = document.getElementById('bCat').value.trim();
-  const montant = Number(document.getElementById('bMontant').value);
-  if (!cat || !montant) { toast('Champs invalides', true); return; }
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/budgets_mensuels`, {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=representation' },
-      body: JSON.stringify({ mois: moisCourant, categorie: cat, montant_prevu: montant })
-    });
-    toast('📋 Budget défini');
-    document.getElementById('bCat').value = '';
-    document.getElementById('bMontant').value = '';
-    loadAll();
-  } catch (e) { toast(e.message, true); }
-}
-
-async function deleteEcriture(id, libelle) {
-  const e = ECRITURES.find(x => x.id === id);
-  if (e && e.cloture) { toast('🔒 Mois clôturé', true); return; }
-  if (!confirm(`Supprimer "${libelle}" ?`)) return;
-  try {
-    await apiDelete(`ecritures?id=eq.${id}`);
-    toast('🗑️ Supprimée');
-    loadAll();
+    await apiPatch(`echeances?id=eq.${id}`, { fait: true });
+    toast('✓ Payé'); loadAll();
   } catch (e) { toast(e.message, true); }
 }
 
 async function cloturerMois(mois) {
-  if (!confirm(`Clôturer ${mois} ?\n\nCela va :\n- Archiver les totaux\n- Verrouiller les écritures du mois\n- Envoyer une notif`)) return;
+  if (!confirm(`Clôturer ${mois} ?`)) return;
   try {
     const ecMois = ECRITURES.filter(e => e.mois === mois);
-    if (!ecMois.length) { toast('Aucune écriture à clôturer', true); return; }
+    if (!ecMois.length) { toast('Aucune écriture', true); return; }
     const rev = totalMois(mois, 'produit');
     const dep = totalMois(mois, 'charge');
     const benefice = rev - dep;
@@ -631,79 +695,45 @@ async function cloturerMois(mois) {
     const passif = COMPTES.filter(c => c.type === 'passif').reduce((s, c) => s + soldeCompte(c.numero), 0);
     const patrimoine = actif - passif;
     const epargne = PROJETS.reduce((s, p) => s + epargneProjet(p), 0);
-    const details = {};
-    ecMois.forEach(e => {
-      const dc = COMPTES.find(c => c.numero === e.compte_debit);
-      const cc = COMPTES.find(c => c.numero === e.compte_credit);
-      if (dc && dc.type === 'charge') details[dc.libelle] = (details[dc.libelle] || 0) + Number(e.montant);
-      if (cc && cc.type === 'produit') details[cc.libelle] = (details[cc.libelle] || 0) + Number(e.montant);
-    });
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/historique_mensuel`, {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=representation' },
-      body: JSON.stringify({ mois, total_produits: rev, total_charges: dep, resultat: benefice, solde_banque: banque, solde_caisse: caisse, patrimoine, epargne_cumulee: epargne, details })
-    });
-    if (!r.ok) throw new Error(await r.text());
-    await fetch(`${SUPABASE_URL}/rest/v1/ecritures?mois=eq.${mois}`, {
-      method: 'PATCH',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cloture: true })
-    });
-    toast('📦 Mois clôturé');
-    notify('📦 Mois clôturé', `${mois}\nBénéfice : ${fmt(benefice)}\nPatrimoine : ${fmt(patrimoine)}`, 'high');
+    await apiPost('historique_mensuel', { mois, total_produits: rev, total_charges: dep, resultat: benefice, solde_banque: banque, solde_caisse: caisse, patrimoine, epargne_cumulee: epargne });
+    await apiPatch(`ecritures?mois=eq.${mois}`, { cloture: true });
+    toast('📦 Clôturé'); notify('📦 Mois clôturé', mois + ' : ' + fmt(benefice));
     loadAll();
   } catch (e) { toast(e.message, true); }
 }
 
+async function deleteCloture(id) {
+  if (!confirm('Supprimer cette clôture ?\n(Ne déverrouille pas les écritures)')) return;
+  try { await apiDelete(`historique_mensuel?id=eq.${id}`); toast('🗑️ Supprimé'); loadAll(); }
+  catch (e) { toast(e.message, true); }
+}
+
 function exportJSON() {
-  const data = {
-    version: 1,
-    exported_at: new Date().toISOString(),
-    comptes: COMPTES, ecritures: ECRITURES, projets: PROJETS,
-    budgets_mensuels: BUDGETS, historique_mensuel: HISTORIQUE, echeances: ECHEANCES
-  };
+  const data = { version: 1, exported_at: new Date().toISOString(), comptes: COMPTES, ecritures: ECRITURES, projets: PROJETS, budgets_mensuels: BUDGETS, historique_mensuel: HISTORIQUE, echeances: ECHEANCES };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `rick-finance-backup-${new Date().toISOString().slice(0, 10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  toast('📥 Export téléchargé');
+  a.href = url; a.download = `rick-finance-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click();
+  URL.revokeObjectURL(url); toast('📥 Export téléchargé');
 }
-
 async function importJSON(event) {
   const file = event.target.files[0];
   if (!file) return;
-  if (!confirm('Importer ce fichier ?\n\nLes données seront AJOUTÉES.')) return;
+  if (!confirm('Importer ce fichier ?')) return;
   try {
-    const text = await file.text();
-    const data = JSON.parse(text);
-    if (!data.version) { toast('Fichier invalide', true); return; }
+    const data = JSON.parse(await file.text());
     let count = 0;
-    if (data.ecritures && data.ecritures.length) {
-      const r = await fetch(`${SUPABASE_URL}/rest/v1/ecritures`, {
-        method: 'POST',
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(data.ecritures.map(e => ({
-          date: e.date, libelle: e.libelle, montant: e.montant,
-          compte_debit: e.compte_debit, compte_credit: e.compte_credit,
-          mois: e.mois, type_operation: e.type_operation || 'depense'
-        })))
-      });
+    if (data.ecritures?.length) {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/ecritures`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(data.ecritures.map(e => ({ date: e.date, libelle: e.libelle, montant: e.montant, compte_debit: e.compte_debit, compte_credit: e.compte_credit, mois: e.mois, type_operation: e.type_operation || 'depense' }))) });
       if (r.ok) count += data.ecritures.length;
     }
-    if (data.projets && data.projets.length) {
-      const r = await fetch(`${SUPABASE_URL}/rest/v1/projets`, {
-        method: 'POST',
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(data.projets.map(p => ({ nom: p.nom, type: p.type, objectif: p.objectif })))
-      });
+    if (data.projets?.length) {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/projets`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(data.projets.map(p => ({ nom: p.nom, type: p.type, objectif: p.objectif }))) });
       if (r.ok) count += data.projets.length;
     }
     toast(`📤 ${count} éléments importés`);
     loadAll();
-  } catch (e) { toast('Erreur import : ' + e.message, true); }
+  } catch (e) { toast('Erreur : ' + e.message, true); }
   event.target.value = '';
 }
 
