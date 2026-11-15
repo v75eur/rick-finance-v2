@@ -8,9 +8,11 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 12px; padding-bottom: 80px; font-size: 16px; }
   .container { max-width: 600px; margin: 0 auto; }
-  .header { text-align: center; padding: 8px 0 16px; }
-  .header h1 { font-size: 20px; margin-bottom: 2px; }
-  .header p { font-size: 13px; color: #94a3b8; }
+  .header { text-align: center; padding: 8px 0 8px; }
+  .header h1 { font-size: 20px; }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+  .toolbar button { flex: 1; background: #334155; border: none; color: #e2e8f0; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .toolbar button:active { background: #3b82f6; }
   .mois-nav { display: flex; justify-content: space-between; align-items: center; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
   .mois-nav button { background: #334155; border: none; color: #e2e8f0; width: 36px; height: 36px; border-radius: 18px; font-size: 18px; cursor: pointer; }
   .mois-nav button:active { background: #3b82f6; }
@@ -26,10 +28,7 @@
   .kpi-label { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
   .kpi-value { font-size: 20px; font-weight: 700; }
   .kpi-sub { font-size: 11px; color: #94a3b8; margin-top: 4px; }
-  .kpi-pos { color: #10b981; }
-  .kpi-neg { color: #ef4444; }
-  .kpi-blue { color: #3b82f6; }
-  .kpi-orange { color: #f59e0b; }
+  .kpi-pos { color: #10b981; } .kpi-neg { color: #ef4444; } .kpi-blue { color: #3b82f6; } .kpi-orange { color: #f59e0b; }
   .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   .action-btn { border: none; border-radius: 16px; padding: 20px 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.1s; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .action-btn:active { transform: scale(0.97); }
@@ -45,14 +44,12 @@
   .op-name { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .op-date { font-size: 12px; color: #94a3b8; margin-top: 2px; }
   .op-amount { font-size: 15px; font-weight: 700; white-space: nowrap; }
-  .op-amount.neg { color: #ef4444; }
-  .op-amount.pos { color: #10b981; }
+  .op-amount.neg { color: #ef4444; } .op-amount.pos { color: #10b981; }
   .op-del { background: #dc2626; border: none; color: white; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+  .op-pay { background: #10b981; border: none; color: white; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 14px; flex-shrink: 0; }
   .progress-bar { height: 10px; background: #0f172a; border-radius: 5px; overflow: hidden; margin-top: 6px; }
   .progress-fill { height: 100%; transition: width 0.3s; }
-  .progress-ok { background: #10b981; }
-  .progress-warn { background: #f59e0b; }
-  .progress-danger { background: #ef4444; }
+  .progress-ok { background: #10b981; } .progress-warn { background: #f59e0b; } .progress-danger { background: #ef4444; }
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 100; align-items: flex-end; justify-content: center; }
   .modal-overlay.show { display: flex; }
   .modal { background: #1e293b; width: 100%; max-width: 600px; border-radius: 24px 24px 0 0; padding: 20px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.2s; }
@@ -72,9 +69,9 @@
   .btn-submit.danger { background: #dc2626; }
   .btn-submit.success { background: #10b981; }
   .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; border-top: 1px solid #334155; display: flex; z-index: 50; }
-  .nav-item { flex: 1; padding: 12px; text-align: center; background: none; border: none; color: #64748b; cursor: pointer; font-size: 12px; font-weight: 600; }
+  .nav-item { flex: 1; padding: 12px 4px; text-align: center; background: none; border: none; color: #64748b; cursor: pointer; font-size: 10px; font-weight: 600; }
   .nav-item.active { color: #3b82f6; }
-  .nav-item .emoji { display: block; font-size: 22px; margin-bottom: 2px; }
+  .nav-item .emoji { display: block; font-size: 20px; margin-bottom: 2px; }
   .alert { padding: 14px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 14px; font-weight: 600; }
   .alert-danger { background: #7f1d1d; color: #fecaca; border: 2px solid #dc2626; }
   .alert-warn { background: #78350f; color: #fef3c7; border: 2px solid #f59e0b; }
@@ -92,15 +89,18 @@
   .histo-col .bar-label { font-size: 9px; color: #94a3b8; text-align: center; margin-top: 4px; }
   .projet-item { padding: 12px 0; border-bottom: 1px solid #334155; }
   .projet-item:last-child { border-bottom: none; }
-  .projet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .projet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
   .projet-name { font-size: 15px; font-weight: 600; }
   .projet-meta { font-size: 12px; color: #94a3b8; }
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="header">
-    <h1>🏦 Rick Finance</h1>
+  <div class="header"><h1>🏦 Rick Finance</h1></div>
+  <div class="toolbar">
+    <button onclick="exportJSON()">📥 Export</button>
+    <button onclick="document.getElementById('importFile').click()">📤 Import</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
   </div>
   <div id="loading" class="loading">Chargement...</div>
   <div id="app" class="hidden">
@@ -140,22 +140,12 @@
         <div id="projetsList"></div>
       </div>
     </div>
-    <div id="view-historique" class="hidden">
-      <div class="card">
-        <h2>📊 Évolution (6 derniers mois)</h2>
-        <div id="histoChart"></div>
-      </div>
-      <div class="card">
-        <h2>📅 Clôtures mensuelles</h2>
-        <div id="cloturesList"></div>
-      </div>
-    </div>
     <div id="view-budgets" class="hidden">
       <div class="card">
         <h2>📋 Budgets du mois</h2>
         <div id="budgetsList"></div>
         <div class="form-group" style="margin-top:12px">
-          <label>Définir un budget (catégorie : montant)</label>
+          <label>Définir un budget</label>
           <div style="display:flex; gap:8px;">
             <input type="text" id="bCat" placeholder="Nourriture" style="flex:1">
             <input type="number" id="bMontant" placeholder="30000" style="width:120px">
@@ -164,12 +154,30 @@
         </div>
       </div>
     </div>
+    <div id="view-echeances" class="hidden">
+      <div class="card">
+        <h2>📅 Échéances à venir</h2>
+        <div id="echeancesList"></div>
+        <button class="btn-submit" onclick="openModal('echeance')" style="margin-top:12px">+ Nouvelle échéance</button>
+      </div>
+    </div>
+    <div id="view-historique" class="hidden">
+      <div class="card">
+        <h2>📊 Évolution (6 derniers mois)</h2>
+        <div id="histoChart"></div>
+      </div>
+      <div class="card">
+        <h2>📦 Clôtures mensuelles</h2>
+        <div id="cloturesList"></div>
+      </div>
+    </div>
   </div>
 </div>
 <div class="bottom-nav">
   <button class="nav-item active" onclick="showView('accueil', this)"><span class="emoji">🏠</span>Accueil</button>
   <button class="nav-item" onclick="showView('projets', this)"><span class="emoji">🎯</span>Projets</button>
   <button class="nav-item" onclick="showView('budgets', this)"><span class="emoji">📋</span>Budgets</button>
+  <button class="nav-item" onclick="showView('echeances', this)"><span class="emoji">📅</span>Échéances</button>
   <button class="nav-item" onclick="showView('historique', this)"><span class="emoji">📊</span>Historique</button>
 </div>
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
@@ -211,11 +219,7 @@ const CATEGORIES_REVENU = [
 ];
 const COMPTE_BANQUE = "512";
 
-let COMPTES = [];
-let ECRITURES = [];
-let PROJETS = [];
-let BUDGETS = [];
-let HISTORIQUE = [];
+let COMPTES = [], ECRITURES = [], PROJETS = [], BUDGETS = [], HISTORIQUE = [], ECHEANCES = [];
 let moisCourant = new Date().toISOString().slice(0, 7);
 let modalType = 'depense';
 let selectedCategorie = null;
@@ -263,6 +267,7 @@ async function loadAll() {
     PROJETS = await apiGet('projets?select=*&order=id');
     BUDGETS = await apiGet(`budgets_mensuels?select=*&mois=eq.${moisCourant}`);
     HISTORIQUE = await apiGet('historique_mensuel?select=*&order=mois.desc&limit=12');
+    ECHEANCES = await apiGet('echeances?select=*&fait=eq.false&order=date');
     renderAll();
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
@@ -331,6 +336,7 @@ function renderAll() {
   renderDernieresOps();
   renderProjets();
   renderBudgets();
+  renderEcheances();
   renderHistorique();
 }
 
@@ -342,10 +348,11 @@ function renderDernieresOps() {
     const estRevenu = COMPTES.find(c => c.numero === e.compte_credit)?.type === 'produit';
     const signe = estRevenu ? '+' : '-';
     const cls = estRevenu ? 'pos' : 'neg';
+    const btn = e.cloture ? '<span style="color:#64748b;font-size:12px">🔒</span>' : `<button class="op-del" onclick="deleteEcriture(${e.id}, '${escapeHtml(e.libelle).replace(/'/g, "\\'")}')">🗑️</button>`;
     return `<div class="op-item">
       <div class="op-left"><div class="op-name">${escapeHtml(e.libelle)}</div><div class="op-date">${e.date}</div></div>
       <div class="op-amount ${cls}">${signe}${fmt(e.montant).replace(' F','')} F</div>
-      <button class="op-del" onclick="deleteEcriture(${e.id}, '${escapeHtml(e.libelle).replace(/'/g, "\\'")}')">🗑️</button>
+      ${btn}
     </div>`;
   }).join('');
 }
@@ -356,9 +363,6 @@ function renderProjets() {
   div.innerHTML = PROJETS.map(p => {
     const ep = epargneProjet(p);
     const pct = p.objectif > 0 ? Math.min(100, (ep / p.objectif) * 100) : 0;
-    let cls = 'progress-ok';
-    if (pct >= 100) cls = 'progress-ok';
-    else if (pct >= 50) cls = 'progress-warn';
     return `<div class="projet-item">
       <div class="projet-header">
         <div>
@@ -367,7 +371,7 @@ function renderProjets() {
         </div>
         <button class="btn-submit success" style="width:auto; padding:8px 12px; margin:0; font-size:13px" onclick="openModal('epargne', ${p.id})">+ Épargner</button>
       </div>
-      <div class="progress-bar"><div class="progress-fill ${cls}" style="width:${pct}%"></div></div>
+      <div class="progress-bar"><div class="progress-fill progress-ok" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
 }
@@ -386,11 +390,28 @@ function renderBudgets() {
     if (pct >= 100) cls = 'progress-danger';
     else if (pct >= 80) cls = 'progress-warn';
     return `<div class="projet-item">
-      <div class="projet-header">
-        <div class="projet-name">${escapeHtml(b.categorie)}</div>
-        <div class="projet-meta">${fmt(dep)} / ${fmt(b.montant_prevu)}</div>
-      </div>
+      <div class="projet-header"><div class="projet-name">${escapeHtml(b.categorie)}</div><div class="projet-meta">${fmt(dep)} / ${fmt(b.montant_prevu)}</div></div>
       <div class="progress-bar"><div class="progress-fill ${cls}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderEcheances() {
+  const div = document.getElementById('echeancesList');
+  if (!div) return;
+  if (!ECHEANCES.length) { div.innerHTML = '<div class="empty">Aucune échéance</div>'; return; }
+  const today = new Date().toISOString().slice(0, 10);
+  div.innerHTML = ECHEANCES.map(e => {
+    const jours = Math.ceil((new Date(e.date) - new Date(today)) / (1000 * 60 * 60 * 24));
+    let badge = '', style = '';
+    if (jours < 0) { badge = '⚠️ En retard'; style = 'color:#ef4444'; }
+    else if (jours === 0) { badge = '🔴 Aujourd\'hui'; style = 'color:#ef4444'; }
+    else if (jours <= 3) { badge = `🟠 Dans ${jours}j`; style = 'color:#f59e0b'; }
+    else { badge = `🟢 Dans ${jours}j`; style = 'color:#10b981'; }
+    return `<div class="op-item">
+      <div class="op-left"><div class="op-name">${escapeHtml(e.libelle)}</div><div class="op-date" style="${style}">${e.date} · ${badge}</div></div>
+      <div class="op-amount">${fmt(e.montant)}</div>
+      <button class="op-pay" onclick="marquerPaye(${e.id}, '${escapeHtml(e.libelle).replace(/'/g, "\\'")}', ${e.montant})">✓</button>
     </div>`;
   }).join('');
 }
@@ -406,11 +427,9 @@ function renderHistorique() {
   }
   const max = Math.max(...derniers.map(d => Math.max(d.rev, d.dep)), 1);
   div.innerHTML = '<div class="histo-bar">' + derniers.map(d => {
-    const hRev = (d.rev / max) * 100;
-    const hDep = (d.dep / max) * 100;
     return `<div class="histo-col">
-      <div class="bar-rev" style="height:${hRev}%"></div>
-      <div class="bar-dep" style="height:${hDep}%"></div>
+      <div class="bar-rev" style="height:${(d.rev / max) * 100}%"></div>
+      <div class="bar-dep" style="height:${(d.dep / max) * 100}%"></div>
       <div class="bar-label">${d.mois.slice(5)}</div>
     </div>`;
   }).join('') + '</div>';
@@ -419,20 +438,18 @@ function renderHistorique() {
   if (!HISTORIQUE.length) { clotures.innerHTML = '<div class="empty">Aucune clôture enregistrée</div>'; return; }
   clotures.innerHTML = HISTORIQUE.map(h => `
     <div class="op-item">
-      <div class="op-left">
-        <div class="op-name">${h.mois}</div>
-        <div class="op-date">Bénéfice : ${fmt(h.resultat)}</div>
-      </div>
-      <button class="btn-submit danger" style="width:auto; padding:6px 12px; margin:0; font-size:12px" onclick="cloturerMois('${h.mois}')">Clôturer</button>
+      <div class="op-left"><div class="op-name">${h.mois}</div><div class="op-date">Bénéfice : ${fmt(h.resultat)}</div></div>
     </div>
   `).join('');
 }
 
 function showView(name, btn) {
-  ['accueil','projets','budgets','historique'].forEach(v => document.getElementById('view-' + v).classList.add('hidden'));
+  ['accueil','projets','budgets','echeances','historique'].forEach(v => document.getElementById('view-' + v).classList.add('hidden'));
   document.getElementById('view-' + name).classList.remove('hidden');
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  if (name === 'historique') renderHistorique();
+  if (name === 'echeances') renderEcheances();
 }
 
 function changeMois(delta) {
@@ -472,6 +489,14 @@ function openModal(type, projetId = null) {
       <div class="form-group"><label>Projet</label><input type="text" value="${escapeHtml(p.nom)}" readonly style="opacity:0.6"></div>
       <div class="form-group"><label>Montant à épargner</label><input type="number" id="eMontant" placeholder="10000" inputmode="numeric"></div>
       <button class="btn-submit success" onclick="submitEpargne(${projetId})">💎 Épargner</button>
+    `;
+  } else if (type === 'echeance') {
+    title = '📅 Nouvelle échéance';
+    content = `
+      <div class="form-group"><label>Nom</label><input type="text" id="ecLibelle" placeholder="Ex: Loyer décembre"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="ecDate"></div>
+      <div class="form-group"><label>Montant (optionnel)</label><input type="number" id="ecMontant" placeholder="0"></div>
+      <button class="btn-submit" onclick="submitEcheance()">📅 Ajouter</button>
     `;
   }
 
@@ -532,6 +557,38 @@ async function submitEpargne(projetId) {
   } catch (e) { toast(e.message, true); }
 }
 
+async function submitEcheance() {
+  const libelle = document.getElementById('ecLibelle').value.trim();
+  const date = document.getElementById('ecDate').value;
+  const montant = Number(document.getElementById('ecMontant').value) || 0;
+  if (!libelle || !date) { toast('Champs invalides', true); return; }
+  try {
+    await apiPost('echeances', { libelle, date, montant });
+    toast('📅 Échéance ajoutée');
+    notify('📅 Nouvelle échéance', `${libelle} — ${date}`);
+    closeModal();
+    loadAll();
+  } catch (e) { toast(e.message, true); }
+}
+
+async function marquerPaye(id, libelle, montant) {
+  if (!confirm(`Marquer "${libelle}" comme payé ?\nMontant : ${fmt(montant)}`)) return;
+  try {
+    if (montant > 0) {
+      const date = new Date().toISOString().slice(0, 10);
+      const mois = date.slice(0, 7);
+      await apiPost('ecritures', { date, libelle, montant, compte_debit: '601', compte_credit: '512', mois, type_operation: 'depense' });
+    }
+    await fetch(`${SUPABASE_URL}/rest/v1/echeances?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fait: true })
+    });
+    toast('✓ Échéance payée');
+    loadAll();
+  } catch (e) { toast(e.message, true); }
+}
+
 async function setBudget() {
   const cat = document.getElementById('bCat').value.trim();
   const montant = Number(document.getElementById('bMontant').value);
@@ -550,6 +607,8 @@ async function setBudget() {
 }
 
 async function deleteEcriture(id, libelle) {
+  const e = ECRITURES.find(x => x.id === id);
+  if (e && e.cloture) { toast('🔒 Mois clôturé', true); return; }
   if (!confirm(`Supprimer "${libelle}" ?`)) return;
   try {
     await apiDelete(`ecritures?id=eq.${id}`);
@@ -559,8 +618,93 @@ async function deleteEcriture(id, libelle) {
 }
 
 async function cloturerMois(mois) {
-  if (!confirm(`Clôturer ${mois} ?`)) return;
-  toast('Fonction à venir');
+  if (!confirm(`Clôturer ${mois} ?\n\nCela va :\n- Archiver les totaux\n- Verrouiller les écritures du mois\n- Envoyer une notif`)) return;
+  try {
+    const ecMois = ECRITURES.filter(e => e.mois === mois);
+    if (!ecMois.length) { toast('Aucune écriture à clôturer', true); return; }
+    const rev = totalMois(mois, 'produit');
+    const dep = totalMois(mois, 'charge');
+    const benefice = rev - dep;
+    const banque = soldeCompte('512');
+    const caisse = soldeCompte('530');
+    const actif = COMPTES.filter(c => c.type === 'actif').reduce((s, c) => s + soldeCompte(c.numero), 0);
+    const passif = COMPTES.filter(c => c.type === 'passif').reduce((s, c) => s + soldeCompte(c.numero), 0);
+    const patrimoine = actif - passif;
+    const epargne = PROJETS.reduce((s, p) => s + epargneProjet(p), 0);
+    const details = {};
+    ecMois.forEach(e => {
+      const dc = COMPTES.find(c => c.numero === e.compte_debit);
+      const cc = COMPTES.find(c => c.numero === e.compte_credit);
+      if (dc && dc.type === 'charge') details[dc.libelle] = (details[dc.libelle] || 0) + Number(e.montant);
+      if (cc && cc.type === 'produit') details[cc.libelle] = (details[cc.libelle] || 0) + Number(e.montant);
+    });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/historique_mensuel`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=representation' },
+      body: JSON.stringify({ mois, total_produits: rev, total_charges: dep, resultat: benefice, solde_banque: banque, solde_caisse: caisse, patrimoine, epargne_cumulee: epargne, details })
+    });
+    if (!r.ok) throw new Error(await r.text());
+    await fetch(`${SUPABASE_URL}/rest/v1/ecritures?mois=eq.${mois}`, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cloture: true })
+    });
+    toast('📦 Mois clôturé');
+    notify('📦 Mois clôturé', `${mois}\nBénéfice : ${fmt(benefice)}\nPatrimoine : ${fmt(patrimoine)}`, 'high');
+    loadAll();
+  } catch (e) { toast(e.message, true); }
+}
+
+function exportJSON() {
+  const data = {
+    version: 1,
+    exported_at: new Date().toISOString(),
+    comptes: COMPTES, ecritures: ECRITURES, projets: PROJETS,
+    budgets_mensuels: BUDGETS, historique_mensuel: HISTORIQUE, echeances: ECHEANCES
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rick-finance-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('📥 Export téléchargé');
+}
+
+async function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!confirm('Importer ce fichier ?\n\nLes données seront AJOUTÉES.')) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!data.version) { toast('Fichier invalide', true); return; }
+    let count = 0;
+    if (data.ecritures && data.ecritures.length) {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/ecritures`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(data.ecritures.map(e => ({
+          date: e.date, libelle: e.libelle, montant: e.montant,
+          compte_debit: e.compte_debit, compte_credit: e.compte_credit,
+          mois: e.mois, type_operation: e.type_operation || 'depense'
+        })))
+      });
+      if (r.ok) count += data.ecritures.length;
+    }
+    if (data.projets && data.projets.length) {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/projets`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(data.projets.map(p => ({ nom: p.nom, type: p.type, objectif: p.objectif })))
+      });
+      if (r.ok) count += data.projets.length;
+    }
+    toast(`📤 ${count} éléments importés`);
+    loadAll();
+  } catch (e) { toast('Erreur import : ' + e.message, true); }
+  event.target.value = '';
 }
 
 loadAll();
